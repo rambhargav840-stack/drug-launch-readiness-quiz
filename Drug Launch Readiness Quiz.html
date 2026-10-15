@@ -1,0 +1,1155 @@
+<title>T-Minus Launch Readiness</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap">
+<style>
+/* Layout (same system as ValueSpeak): masthead → hero (launch truth / how functions answered) → why → launch picker → take the pulse → dashboard (controls | results + charts) → fix list desk (ledger | brief | evidence) → question bank → pricing → methods */
+:root {
+  --bg: #eff2f5; --panel: #ffffff; --panel-2: #f7f9fb; --ink: #131a24; --ink-2: #4a5466; --muted: #768093;
+  --rule: #d8dee6; --rule-2: #e8ecf1; --accent: #0b6a5d; --accent-ink: #ffffff; --accent-soft: #e0f0ec; --accent-line: #9ccfc4;
+  --chip: #fff1cc; --chip-ink: #5f4300; --chip-hot: #ffd978;
+  --s1: #2a78d6; --s2: #eb6834;
+  --good: #0ca30c; --good-ink: #006300; --warn: #fab219; --warn-ink: #7a5000; --crit: #d03b3b; --crit-ink: #b42525;
+  --grid: #e3e7ec; --axis: #b9c1cc; --surface: #ffffff;
+  --shadow: 0 1px 2px rgba(19, 26, 36, .06), 0 4px 16px rgba(19, 26, 36, .05);
+  --f-display: "Source Serif 4", "Iowan Old Style", Georgia, serif;
+  --f-ui: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --r: 10px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0d1117; --panel: #151b24; --panel-2: #111720; --ink: #e8edf3; --ink-2: #b3bdcb; --muted: #8591a4;
+  --rule: #29313d; --rule-2: #1f2630; --accent: #4cc3ae; --accent-ink: #062019; --accent-soft: #10302a; --accent-line: #2c6f63;
+  --chip: #3a2f10; --chip-ink: #f6d98c; --chip-hot: #6b5314;
+  --s1: #3987e5; --s2: #d95926;
+  --good-ink: #2fc02f; --warn-ink: #fab219; --crit-ink: #ef7a7a;
+  --grid: #232a35; --axis: #3a4350; --surface: #151b24; --shadow: 0 1px 2px rgba(0,0,0,.3), 0 4px 16px rgba(0,0,0,.25); color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #0d1117; --panel: #151b24; --panel-2: #111720; --ink: #e8edf3; --ink-2: #b3bdcb; --muted: #8591a4;
+  --rule: #29313d; --rule-2: #1f2630; --accent: #4cc3ae; --accent-ink: #062019; --accent-soft: #10302a; --accent-line: #2c6f63;
+  --chip: #3a2f10; --chip-ink: #f6d98c; --chip-hot: #6b5314;
+  --s1: #3987e5; --s2: #d95926;
+  --good-ink: #2fc02f; --warn-ink: #fab219; --crit-ink: #ef7a7a;
+  --grid: #232a35; --axis: #3a4350; --surface: #151b24; --shadow: 0 1px 2px rgba(0,0,0,.3), 0 4px 16px rgba(0,0,0,.25); color-scheme: dark; }
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-ui); font-size: 15px; line-height: 1.5; margin: 0; }
+.wrap { max-width: 1240px; margin: 0 auto; padding-inline: 20px; }
+@media (max-width: 520px) { .wrap { padding-inline: 16px; } }
+h1, h2, h3 { font-family: var(--f-display); font-weight: 600; text-wrap: balance; margin: 0; letter-spacing: -.01em; }
+a { color: var(--accent); }
+button, input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+.eyebrow { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.mono { font-family: var(--f-mono); }
+.muted { color: var(--muted); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* masthead */
+.mast { border-bottom: 1px solid var(--rule); background: var(--panel); }
+.mast .wrap { display: flex; align-items: center; gap: 20px; padding-block: 12px; flex-wrap: wrap; }
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); }
+.brand svg { flex: none; }
+.brand b { font-family: var(--f-display); font-size: 20px; font-weight: 700; letter-spacing: -.01em; }
+.brand span { font-size: 12px; color: var(--muted); border-left: 1px solid var(--rule); padding-left: 10px; }
+.mast nav { display: flex; gap: 4px; flex-wrap: wrap; margin-left: auto; }
+.mast nav a { color: var(--ink-2); text-decoration: none; font-size: 13.5px; padding: 6px 10px; border-radius: 6px; }
+.mast nav a:hover { background: var(--panel-2); color: var(--ink); }
+
+/* hero */
+.hero { padding-block: 44px 28px; }
+.hero .wrap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr); gap: 40px; align-items: start; }
+@media (max-width: 900px) { .hero .wrap { grid-template-columns: minmax(0, 1fr); gap: 28px; } }
+.hero h1 { font-size: clamp(34px, 5vw, 52px); line-height: 1.04; margin-top: 10px; }
+.hero .lede { font-size: 18px; color: var(--ink-2); margin: 16px 0 0; max-width: 34em; }
+.for { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink-2); background: var(--panel); border: 1px solid var(--rule); border-radius: 999px; padding: 4px 12px 4px 6px; }
+.for i { white-space: nowrap; font-style: normal; font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; background: var(--accent); color: var(--accent-ink); border-radius: 999px; padding: 2px 8px; }
+.heroFacts { display: flex; gap: 22px; flex-wrap: wrap; margin-top: 26px; }
+.heroFacts div { font-size: 13px; color: var(--muted); }
+.heroFacts b { display: block; font-size: 22px; color: var(--ink); font-weight: 600; }
+.cta { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 26px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--rule); background: var(--panel); border-radius: 8px; padding: 9px 14px; font-size: 14px; font-weight: 500; cursor: pointer; text-decoration: none; color: var(--ink); }
+.btn:hover { border-color: var(--ink-2); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.primary:hover { filter: brightness(1.06); }
+.btn[disabled] { opacity: .5; cursor: not-allowed; }
+.btn.sm { padding: 6px 10px; font-size: 13px; }
+
+.rosetta { background: var(--panel); border: 1px solid var(--rule); border-radius: 14px; box-shadow: var(--shadow); overflow: hidden; }
+.rosetta .says { background: var(--panel-2); border-bottom: 1px solid var(--rule); padding: 16px 20px; font-family: var(--f-mono); font-size: 13px; }
+.rosetta .says .t { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; font-family: var(--f-ui); margin-bottom: 8px; }
+.rosetta .says dl { display: grid; grid-template-columns: auto 1fr; gap: 3px 16px; margin: 0; }
+.rosetta .says dt { color: var(--muted); }
+.rosetta .says dd { margin: 0; color: var(--ink); overflow-wrap: anywhere; }
+.rosetta .hears { padding: 18px 20px 18px; }
+.rosetta .hears .t { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+.seg { display: inline-flex; background: var(--panel-2); border: 1px solid var(--rule); border-radius: 8px; padding: 2px; gap: 2px; flex-wrap: wrap; }
+.seg button { border: 0; background: transparent; border-radius: 6px; padding: 5px 10px; font-size: 13px; cursor: pointer; color: var(--ink-2); }
+.seg button[aria-pressed="true"] { background: var(--panel); color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,.08); font-weight: 600; }
+.arrow { display: flex; align-items: center; gap: 8px; padding: 0 20px; margin-top: -11px; position: relative; }
+.arrow span { background: var(--accent); color: var(--accent-ink); font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; border-radius: 999px; padding: 3px 10px; }
+.arows { display: flex; flex-direction: column; gap: 5px; }
+.arow { display: grid; grid-template-columns: 92px minmax(0, 1fr) 44px; gap: 10px; align-items: center; font-size: 13px; }
+.arow span { color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.arow .abar { height: 12px; background: var(--rule-2); border-radius: 3px; position: relative; overflow: hidden; }
+.arow .abar i { position: absolute; inset: 0 auto 0 0; background: var(--s1); border-radius: 0 3px 3px 0; }
+.arow .abar i.low { background: var(--s2); }
+.arow b { font-family: var(--f-mono); font-size: 12.5px; font-weight: 500; text-align: right; font-variant-numeric: tabular-nums; }
+.hfoot { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--rule); font-size: 13px; color: var(--ink-2); }
+.hfoot p { margin: 0; flex: 1 1 260px; min-width: 0; }
+
+/* why */
+.why { padding-block: 8px 36px; }
+.why .wrap { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; border-top: 1px solid var(--rule); padding-top: 26px; }
+@media (max-width: 820px) { .why .wrap { grid-template-columns: minmax(0, 1fr); gap: 18px; } }
+.why h3 { font-size: 18px; margin: 6px 0 6px; }
+.why p { margin: 0; color: var(--ink-2); font-size: 14.5px; }
+.why cite { display: block; font-style: normal; font-size: 12.5px; color: var(--muted); margin-top: 8px; }
+
+/* sections */
+section.block { padding-block: 30px; }
+.shead { display: flex; align-items: baseline; gap: 14px; margin-bottom: 16px; flex-wrap: wrap; }
+.step { font-family: var(--f-mono); font-size: 12px; color: var(--accent); border: 1px solid var(--accent-line); border-radius: 999px; padding: 1px 9px; }
+.shead h2 { font-size: 26px; }
+.shead p { margin: 0; color: var(--muted); font-size: 14px; flex-basis: 100%; }
+
+.cases { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 860px) { .cases { grid-template-columns: minmax(0, 1fr); } }
+.case { text-align: left; border: 1px solid var(--rule); background: var(--panel); border-radius: var(--r); padding: 14px 16px; cursor: pointer; display: flex; flex-direction: column; gap: 6px; }
+.case:hover { border-color: var(--ink-2); }
+.case[aria-pressed="true"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); background: var(--accent-soft); }
+.case .area { font-size: 11.5px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); }
+.case b { font-family: var(--f-display); font-size: 17px; font-weight: 600; line-height: 1.25; }
+.case span { font-size: 13px; color: var(--ink-2); }
+.case em { font-style: normal; font-size: 12px; color: var(--muted); margin-top: auto; }
+
+/* panels, controls */
+.panel { background: var(--panel); border: 1px solid var(--rule); border-radius: var(--r); }
+.bench { display: grid; grid-template-columns: 330px minmax(0, 1fr); gap: 20px; align-items: start; }
+@media (max-width: 980px) { .bench { grid-template-columns: minmax(0, 1fr); } }
+.controls { padding: 16px; display: flex; flex-direction: column; gap: 18px; position: sticky; top: 12px; max-height: calc(100vh - 24px); overflow: auto; }
+@media (max-width: 980px) { .controls { position: static; max-height: none; } }
+.controls h3 { font-family: var(--f-ui); font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+.radios { display: flex; flex-direction: column; gap: 6px; }
+.radio { display: grid; grid-template-columns: 18px 1fr auto; gap: 8px; align-items: start; border: 1px solid var(--rule-2); border-radius: 8px; padding: 8px 10px; cursor: pointer; font-size: 13.5px; }
+.radio:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
+.radio input { margin: 3px 0 0; accent-color: var(--accent); }
+.radio small { display: block; color: var(--muted); font-size: 11.5px; line-height: 1.35; }
+.radio .v { font-family: var(--f-mono); font-size: 12.5px; white-space: nowrap; }
+.field { display: flex; flex-direction: column; gap: 4px; }
+.field .lab { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; color: var(--ink-2); }
+.field .lab output { font-family: var(--f-mono); font-size: 12.5px; color: var(--ink); white-space: nowrap; }
+input[type=range] { width: 100%; accent-color: var(--accent); margin: 2px 0; }
+.note { font-size: 12px; color: var(--muted); }
+.params { display: flex; flex-direction: column; gap: 12px; }
+textarea { width: 100%; min-height: 150px; border: 1px solid var(--rule); border-radius: 8px; background: var(--panel-2); padding: 8px; font-family: var(--f-mono); font-size: 12px; resize: vertical; }
+select { border: 1px solid var(--rule); border-radius: 7px; background: var(--panel-2); padding: 6px 8px; font-size: 13.5px; width: 100%; min-width: 0; }
+.grid2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
+.status { font-size: 12.5px; padding: 6px 8px; border-radius: 6px; background: var(--panel-2); }
+.status.err { color: var(--crit-ink); }
+
+.results { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.verdict { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 14px 16px; }
+.pill { display: inline-flex; align-items: center; gap: 7px; border-radius: 999px; padding: 4px 11px 4px 8px; font-size: 13px; font-weight: 600; border: 1px solid var(--rule); background: var(--panel-2); white-space: nowrap; }
+.pill .ic { width: 16px; height: 16px; border-radius: 50%; display: inline-grid; place-items: center; font-size: 11px; font-weight: 700; color: #fff; }
+.pill.good .ic { background: var(--good); } .pill.warning .ic { background: var(--warn); color: #3b2a00; } .pill.critical .ic { background: var(--crit); }
+.pill.good { color: var(--good-ink); } .pill.warning { color: var(--warn-ink); } .pill.critical { color: var(--crit-ink); }
+.pill.sm { font-size: 11.5px; padding: 1px 8px 1px 5px; gap: 5px; }
+.pill.sm .ic { width: 13px; height: 13px; font-size: 9px; }
+.verdict p { margin: 0; font-size: 14px; color: var(--ink-2); flex: 1 1 320px; min-width: 0; }
+.tiles { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 1100px) { .tiles { grid-template-columns: repeat(6, minmax(0, 1fr)); } .tile { grid-column: span 2; } .tile:nth-child(n+4) { grid-column: span 3; } }
+@media (max-width: 560px) { .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } .tile, .tile:nth-child(n+4) { grid-column: span 1; } .tile:last-child { grid-column: 1 / -1; } }
+.tile { padding: 12px 14px; min-width: 0; }
+.tile .l { font-size: 12.5px; color: var(--muted); }
+.tile .v { font-size: 22px; font-weight: 600; margin-top: 2px; line-height: 1.2; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.tile .v small { font-size: 13px; color: var(--muted); font-weight: 400; }
+.tile .s { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.charts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+@media (max-width: 760px) { .charts { grid-template-columns: minmax(0, 1fr); } }
+.chart { padding: 14px 14px 10px; min-width: 0; }
+.chart header { display: flex; justify-content: space-between; align-items: start; gap: 10px; }
+.chart h4 { margin: 0; font-size: 14.5px; font-weight: 600; }
+.chart .sub { font-size: 12.5px; color: var(--muted); margin: 2px 0 6px; }
+.chart .tbtn { border: 1px solid var(--rule); background: var(--panel); border-radius: 6px; font-size: 12px; padding: 3px 8px; cursor: pointer; color: var(--ink-2); flex: none; }
+.chart svg { width: 100%; height: auto; display: block; overflow: visible; }
+.chart svg text { fill: var(--muted); font-family: var(--f-ui); font-size: 11px; }
+.chart svg text.ink { fill: var(--ink-2); }
+.chart svg text.strong { fill: var(--ink); font-weight: 600; }
+.chart svg text.cell { fill: var(--ink); font-family: var(--f-mono); font-size: 11.5px; }
+.chart svg text.cell.on { fill: var(--panel); font-weight: 500; }
+@media (max-width: 560px) { .chart svg text, .chart svg text.ink, .chart svg text.cell { font-size: 12.5px; } }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--ink-2); margin: 2px 0 4px; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+.legend i.line { height: 2px; width: 14px; border-radius: 1px; vertical-align: 3px; }
+.legend i.dash { height: 0; width: 14px; border-top: 2px dashed var(--muted); border-radius: 0; background: none !important; vertical-align: 3px; }
+.legend i.dashs2 { height: 0; width: 14px; border-top: 2px dashed var(--s2); border-radius: 0; background: none !important; vertical-align: 3px; }
+.tablewrap { overflow-x: auto; }
+table.dt { width: 100%; border-collapse: collapse; font-size: 12.5px; font-variant-numeric: tabular-nums; }
+table.dt th, table.dt td { text-align: right; padding: 5px 8px; border-bottom: 1px solid var(--rule-2); white-space: nowrap; }
+table.dt th:first-child, table.dt td:first-child { text-align: left; white-space: normal; }
+table.dt th { color: var(--muted); font-weight: 500; }
+#tip { position: fixed; pointer-events: none; z-index: 20; background: var(--ink); color: var(--bg); font-size: 12px; line-height: 1.4; padding: 7px 9px; border-radius: 6px; max-width: 280px; box-shadow: var(--shadow); font-variant-numeric: tabular-nums; }
+#tip b { font-weight: 600; }
+
+/* take the pulse */
+.quizgrid { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 20px; align-items: start; }
+@media (max-width: 900px) { .quizgrid { grid-template-columns: minmax(0, 1fr); } }
+.qside { position: static; max-height: none; }
+.dots { display: flex; gap: 6px; flex-wrap: wrap; }
+.dots i { width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--rule); display: grid; place-items: center; font-style: normal; font-family: var(--f-mono); font-size: 12px; color: var(--muted); background: var(--panel-2); }
+.dots i.cur { border-color: var(--accent); color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.dots i.ok { background: var(--good); border-color: var(--good); color: #fff; }
+.dots i.no { background: var(--warn); border-color: var(--warn); color: #3b2a00; }
+.dots i.cw { background: var(--crit); border-color: var(--crit); color: #fff; }
+.paper { padding: 26px 30px 24px; background: var(--surface); min-width: 0; }
+@media (max-width: 520px) { .paper { padding: 20px 18px; } }
+.paper .meta { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+.paper .meta span + span::before { content: "·"; margin-right: 8px; }
+.paper .head { font-family: var(--f-display); font-size: 21px; line-height: 1.45; margin: 0 0 16px; }
+.paper h5 { font-family: var(--f-ui); font-size: 12px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: var(--accent); margin: 16px 0 4px; }
+.paper p.sec { font-family: var(--f-display); font-size: 16.5px; line-height: 1.6; margin: 0; max-width: 42em; }
+.opts { display: flex; flex-direction: column; gap: 8px; margin: 0 0 16px; }
+.opt { display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 10px; align-items: start; text-align: left; border: 1px solid var(--rule); background: var(--panel); border-radius: 9px; padding: 10px 12px; cursor: pointer; font-size: 14.5px; line-height: 1.45; }
+.opt:hover:not([disabled]) { border-color: var(--ink-2); }
+.opt .k { width: 24px; height: 24px; border-radius: 6px; border: 1px solid var(--rule); display: grid; place-items: center; font-family: var(--f-mono); font-size: 12px; color: var(--ink-2); }
+.opt[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
+.opt[aria-pressed="true"] .k { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.opt.right { border-color: var(--good); box-shadow: inset 0 0 0 1px var(--good); }
+.opt.wrong { border-color: var(--crit); }
+.opt[disabled] { cursor: default; }
+.qrow { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.qrow .sp { flex: 1; }
+.fb { margin-top: 16px; border-top: 1px dashed var(--rule); padding-top: 14px; display: flex; flex-direction: column; gap: 8px; }
+.fb p { margin: 0; font-size: 14.5px; color: var(--ink-2); max-width: 46em; }
+.fb p b { color: var(--ink); }
+.sumtiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 6px 0 16px; }
+@media (max-width: 560px) { .sumtiles { grid-template-columns: minmax(0, 1fr); } }
+.sumtiles div { border: 1px solid var(--rule-2); border-radius: 9px; padding: 10px 12px; background: var(--panel-2); }
+.sumtiles b { display: block; font-size: 22px; font-variant-numeric: tabular-nums; }
+.sumtiles span { font-size: 12.5px; color: var(--muted); }
+.alist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.alist li { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; align-items: start; font-size: 13.5px; padding: 8px 10px; border: 1px solid var(--rule-2); border-radius: 8px; }
+.alist small { display: block; color: var(--muted); font-size: 12px; }
+
+/* fix list desk */
+.toolbar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 0 0 14px; }
+.toolbar .sp { flex: 1; }
+.desk { display: grid; grid-template-columns: 300px minmax(0, 1fr) 280px; gap: 16px; align-items: start; }
+@media (max-width: 1150px) { .desk { grid-template-columns: 280px minmax(0, 1fr); } .guard { grid-column: 1 / -1; } }
+@media (max-width: 820px) { .desk { grid-template-columns: minmax(0, 1fr); } }
+.ledger { padding: 14px; font-family: var(--f-mono); font-size: 12px; }
+.ledger h3, .guard h3 { font-family: var(--f-ui); font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.ledger p.note { font-family: var(--f-ui); margin: 0 0 8px; }
+.lrow { display: flex; flex-direction: column; gap: 3px; padding: 8px 6px; border-radius: 6px; border-bottom: 1px solid var(--rule-2); }
+.lrow .top { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-family: var(--f-ui); font-size: 13px; font-weight: 600; color: var(--ink); }
+.lrow .val { color: var(--ink-2); overflow-wrap: anywhere; }
+.lrow.hot { background: var(--chip); }
+.n { background: var(--chip); color: var(--chip-ink); border-radius: 4px; padding: 0 3px; font-family: var(--f-ui); font-size: .92em; font-weight: 500; white-space: nowrap; }
+.n.hot { background: var(--chip-hot); }
+.guard { padding: 14px; }
+.checks { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.checks li { display: grid; grid-template-columns: 20px 1fr; gap: 8px; font-size: 13px; padding: 7px 8px; border: 1px solid var(--rule-2); border-radius: 8px; }
+.checks .ic { width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center; font-size: 11px; font-weight: 700; color: #fff; margin-top: 1px; }
+.checks .pass .ic { background: var(--good); } .checks .warn .ic { background: var(--warn); color: #3b2a00; } .checks .fail .ic { background: var(--crit); }
+.checks small { display: block; color: var(--muted); font-size: 11.5px; line-height: 1.35; }
+.meter { margin-top: 12px; }
+.meter .bar { height: 8px; border-radius: 4px; background: var(--rule-2); position: relative; overflow: hidden; }
+.meter .fill { position: absolute; inset: 0 auto 0 0; background: var(--accent); border-radius: 4px; }
+.meter .tick { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--ink); }
+.meter .lab { display: flex; justify-content: space-between; font-size: 12px; color: var(--ink-2); margin-bottom: 4px; }
+
+/* question bank */
+.bankgrid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+@media (max-width: 900px) { .bankgrid { grid-template-columns: minmax(0, 1fr); } }
+.bankin { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.bankin textarea { min-height: 300px; }
+.bankout { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.gq { padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; }
+.gq.blocked { opacity: .72; }
+.gq h4 { margin: 0; font-family: var(--f-display); font-size: 16px; font-weight: 600; line-height: 1.4; }
+.gq ol { margin: 0; padding-left: 22px; font-size: 13.5px; color: var(--ink-2); display: flex; flex-direction: column; gap: 2px; }
+.gq ol li.ans { color: var(--ink); font-weight: 600; }
+.gq blockquote { margin: 0; border-left: 3px solid var(--accent-line); padding: 4px 10px; font-family: var(--f-mono); font-size: 12px; color: var(--ink-2); background: var(--panel-2); border-radius: 0 6px 6px 0; overflow-wrap: anywhere; }
+.gq.blocked blockquote { border-left-color: var(--crit); }
+.empty { padding: 22px; color: var(--muted); font-size: 14px; }
+.empty b { color: var(--ink); display: block; margin-bottom: 4px; font-size: 15px; }
+
+/* pricing */
+.tiers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+@media (max-width: 860px) { .tiers { grid-template-columns: minmax(0, 1fr); } }
+.tier { padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+.tier.feat { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.tier h3 { font-size: 20px; }
+.tier .price { font-size: 30px; font-weight: 600; line-height: 1.1; }
+.tier .price small { font-size: 14px; font-weight: 400; color: var(--muted); }
+.tier ul { margin: 0; padding-left: 18px; font-size: 14px; color: var(--ink-2); display: flex; flex-direction: column; gap: 4px; }
+.tag { font-size: 10.5px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); border: 1px solid var(--rule); border-radius: 4px; padding: 0 4px; margin-left: 4px; }
+
+/* methods */
+.methods { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 28px; }
+@media (max-width: 860px) { .methods { grid-template-columns: minmax(0, 1fr); } }
+.methods h3 { font-size: 18px; margin-bottom: 8px; }
+.methods p, .methods li { font-size: 14px; color: var(--ink-2); }
+.methods ol { padding-left: 20px; margin: 0; display: flex; flex-direction: column; gap: 6px; }
+.formula { font-family: var(--f-mono); font-size: 13px; background: var(--panel); border: 1px solid var(--rule); border-radius: 8px; padding: 10px 12px; color: var(--ink); }
+footer { border-top: 1px solid var(--rule); padding-block: 22px 40px; font-size: 12.5px; color: var(--muted); }
+footer .wrap { display: flex; gap: 12px 24px; flex-wrap: wrap; justify-content: space-between; }
+@media (prefers-reduced-motion: no-preference) { .arow .abar i { transition: width .25s ease; } }
+</style>
+
+<header class="mast">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="T-Minus home">
+      <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><rect x="1" y="1" width="28" height="28" rx="7" fill="var(--accent)"/><circle cx="15" cy="16" r="8" fill="none" stroke="var(--accent-ink)" stroke-width="2" stroke-dasharray="38 50.3" stroke-linecap="round" transform="rotate(-90 15 16)"/><path d="M15 16V11.5" stroke="var(--accent-ink)" stroke-width="2" stroke-linecap="round"/><path d="M12.5 5.5h5" stroke="var(--accent-ink)" stroke-width="2" stroke-linecap="round"/></svg>
+      <b>T-Minus</b><span>Drug Launch Readiness Quiz</span>
+    </a>
+    <nav aria-label="Sections">
+      <a href="#pulse">Take the pulse</a><a href="#dashboard">Dashboard</a><a href="#fix">Fix list</a><a href="#bank">Question bank</a><a href="#pricing">Pricing</a><a href="#methods">Methods</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="wrap">
+      <div>
+        <span class="for"><i>PAI-051</i>Customised for Sino Biopharmaceutical: oncology, liver disease, respiratory</span>
+        <h1>Drug Launch Readiness Quiz</h1>
+        <p class="lede">Quizzes every launch function on the same launch facts at five points on the countdown, then shows where the functions disagree and who is confidently wrong. Every question traces to an approved source.</p>
+        <div class="heroFacts">
+          <div><b>8</b>role tracks</div>
+          <div><b>5</b>countdown pulses</div>
+          <div><b>6</b>launch-critical areas</div>
+          <div><b>300</b>simulated staff</div>
+        </div>
+        <div class="cta"><a class="btn primary" href="#pulse">Take the pulse</a><a class="btn" href="#dashboard">Open the dashboard</a></div>
+      </div>
+      <div class="rosetta" aria-live="polite">
+        <div class="says">
+          <div class="t"><span class="eyebrow">The launch truth</span><span class="muted" id="hCase" style="font-size:12.5px"></span></div>
+          <dl id="hSays"></dl>
+        </div>
+        <div class="arrow"><span>Answered by</span></div>
+        <div class="hears">
+          <div class="t"><span class="eyebrow" id="hWho">How each function answered</span>
+            <div class="seg" id="hArea" role="group" aria-label="Launch-critical area for the preview"></div>
+          </div>
+          <div class="arows" id="hRows"></div>
+          <div class="hfoot" id="hFoot"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="why">
+    <div class="wrap">
+      <div><span class="eyebrow">The problem</span><h3>Launches miss when teams disagree</h3><p>About a third of launches miss year-1 expectations, and most never catch up. Readiness is tracked as tasks completed and self-rated surveys. Nobody checks whether medical, access, sales and supply hold the same launch facts until a doctor or a hospital finds the gap.</p><cite>36% of 149 drugs missed year-1 expectations; 70% of those still underperformed in years 2–3. Deloitte, 2020</cite></div>
+      <div><span class="eyebrow">What it does</span><h3>One question bank, eight roles, five pulses</h3><p>T-Minus turns the approved launch documents into short quizzes for each role and runs them from T-120 to T+90. It scores accuracy, confidence and how far functions disagree, then assigns micro-lessons where the gaps are.</p><cite>“The first six months after launch are critical in determining the product's trajectory.” IQVIA, 2025</cite></div>
+      <div><span class="eyebrow">Why it can be trusted</span><h3>Every question cites its source</h3><p>Questions come only from approved documents and pass medical-legal review before release. The page blocks any generated question whose quote is not in the source text. Every result is logged per person as training and evaluation evidence.</p><cite>China's Administrative Measures for Medical Representatives (in force 1 August 2026) require systems for rep training and evaluation.</cite></div>
+    </div>
+  </section>
+
+  <section class="block" id="launch">
+    <div class="wrap">
+      <div class="shead"><span class="step">Step 1</span><h2>Choose a launch</h2><p>Three demonstration launches across Sino's focus areas. Question banks and team results are illustrative, not Sino, CTTQ or GSK data.</p></div>
+      <div class="cases" id="cases" role="group" aria-label="Launches"></div>
+    </div>
+  </section>
+
+  <section class="block" id="pulse">
+    <div class="wrap">
+      <div class="shead"><span class="step">Step 2</span><h2>Take the pulse yourself</h2><p>Answer six questions as a member of the launch team, and mark how sure you are. Confidently wrong answers are the ones that reach doctors.</p></div>
+      <div class="quizgrid">
+        <aside class="panel controls qside" id="qside" aria-label="Quiz settings"></aside>
+        <article class="panel paper" id="qcard" aria-live="polite"></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="dashboard">
+    <div class="wrap">
+      <div class="shead"><span class="step">Steps 3–4</span><h2>Set the launch context, read the readiness</h2><p>The whole launch team is simulated at the chosen pulse. Move any input and the scores, charts, fix list and brief update together.</p></div>
+      <div class="bench">
+        <aside class="panel controls" id="controls" aria-label="Launch context"></aside>
+        <div class="results">
+          <div class="panel verdict" id="verdict"></div>
+          <div class="tiles" id="tiles"></div>
+          <div class="charts">
+            <div class="panel chart" id="cHeat"></div>
+            <div class="panel chart" id="cGap"></div>
+            <div class="panel chart" id="cCal"></div>
+            <div class="panel chart" id="cTraj"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="fix">
+    <div class="wrap">
+      <div class="shead"><span class="step">Step 5</span><h2>Fix list, brief and evidence</h2><p>Gaps ranked by risk with an owner for each, a brief for the launch leader, and the compliance record. Hover a highlighted figure to find its row in the fix list.</p></div>
+      <div class="toolbar">
+        <span class="muted" style="font-size:13px" id="deskNote"></span>
+        <span class="sp"></span>
+        <button class="btn sm" id="copyBtn">Copy brief</button>
+        <button class="btn sm" id="dlMd" hidden>Download brief (.md)</button>
+        <button class="btn sm" id="dlCsv" hidden>Download evidence ledger (.csv)</button>
+      </div>
+      <div class="desk">
+        <div class="panel ledger" id="ledger"></div>
+        <article class="panel paper" id="paper"></article>
+        <aside class="panel guard" id="guard"></aside>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="bank">
+    <div class="wrap">
+      <div class="shead"><span class="step">Step 6</span><h2>Build a question bank from your own document</h2><p>Paste approved text. Claude drafts questions for a role, and the page checks each question's quote against your text before it can be used. The sample below is an illustrative launch truth sheet.</p></div>
+      <div class="bankgrid">
+        <div class="panel bankin">
+          <div class="field"><label class="lab" for="srcText"><span>Approved source text</span><output id="srcCount"></output></label><textarea id="srcText" spellcheck="false"></textarea></div>
+          <div class="grid2">
+            <div class="field"><label class="lab" for="genRole"><span>Write questions for</span></label><select id="genRole"></select></div>
+            <div class="field"><label class="lab" for="genN"><span>How many</span></label><select id="genN"><option>3</option><option selected>4</option><option>5</option></select></div>
+          </div>
+          <div class="qrow"><button class="btn primary" id="genBtn" hidden>Draft questions with Claude</button><button class="btn sm" id="genStop" hidden>Stop</button><span class="note" id="genStatus"></span></div>
+        </div>
+        <div class="bankout" id="bankOut"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="pricing">
+    <div class="wrap">
+      <div class="shead"><span class="step">Pricing</span><h2>Plans</h2><p>Priced per launch for Sino's launch teams, with a paid pilot to start and a portfolio plan for Sino's launch pipeline.</p></div>
+      <div class="tiers">
+        <div class="panel tier"><span class="eyebrow">Start here</span><h3>Launch Readiness Sprint</h3><div class="price">$18,000 <small>60 days</small></div>
+          <ul><li>One product, up to 300 users</li><li>Pulses at T-60 and T-30</li><li>Alignment report and fix list</li><li>Fee credited in full to a launch licence within 90 days</li></ul></div>
+        <div class="panel tier feat"><span class="eyebrow">For each launch</span><h3>Per-launch licence</h3><div class="price">$45,000 <small>per launch</small></div>
+          <ul><li>Five pulses from T-120 to T+90</li><li>Up to 1,500 users across all eight role tracks</li><li>Question drafting with citation lock and medical-legal approval</li><li>Dashboard, micro-lessons and evidence ledger</li><li>Mandarin and English</li></ul></div>
+        <div class="panel tier"><span class="eyebrow">For the pipeline</span><h3>Portfolio</h3><div class="price">$180,000 <small>per year</small></div>
+          <ul><li>Unlimited launches and new indications</li><li>Launch-memory benchmark across launches</li><li>HR roster and single sign-on<span class="tag">Roadmap</span></li><li>Private China-region deployment<span class="tag">Roadmap</span></li></ul></div>
+      </div>
+      <p class="note" style="margin-top:12px">List price per launch from the PAI-051 brief. Alliance Mode for partnered launches: $15,000 per launch. Optional outcome bonus: $10,000 if the launch beats Sino's own hospital-listing benchmark by 15% or more.</p>
+    </div>
+  </section>
+
+  <section class="block" id="methods">
+    <div class="wrap">
+      <div class="shead"><span class="step">Methods</span><h2>How the scores are made</h2></div>
+      <div class="methods">
+        <div>
+          <h3>Scores</h3>
+          <p class="formula">Readiness index = 0.60 × accuracy + 0.25 × (100 − alignment gap) + 0.15 × (100 − 2 × confidently wrong %)</p>
+          <p><b>Accuracy</b> is the share of answers that match the launch truth sheet. <b>Confidently wrong</b> is the share of answers that are wrong and marked Sure.</p>
+          <p><b>Alignment gap.</b> For each question, the answer mix of every pair of functions is compared: the share of answers that would have to move for the two mixes to match. The gap is the average over all pairs, from 0 (every function answers alike) to 100 (no overlap).</p>
+          <p><b>Verdicts.</b> An area is Go at 80% accuracy or more, a gap of 12 or less and 6% or less confidently wrong; Fix below 65% accuracy, above a gap of 22 or above 12% confidently wrong; otherwise Watch. The launch is Fix below an index of 65 or with two areas at Fix, and Go at 80 or more with no area at Fix, at most two at Watch and participation of 70% or more.</p>
+          <h3 style="margin-top:18px">The simulated team</h3>
+          <p>300 staff in eight functions (330 with the GSK team), each starting with an illustrative knowledge level per area. Training hours raise knowledge before each pulse. Micro-lessons add most where knowledge started lowest; without reinforcement, knowledge fades after launch. Individual ability varies around each function's level. Low leadership clarity lowers accuracy on positioning and objections, and makes each function's wrong answers cluster on a different option.</p>
+          <p>The question banks are illustrative launch truth sheets written for this demonstration. They are not Sino, CTTQ or GSK documents and make no clinical claims.</p>
+        </div>
+        <div>
+          <h3>Sources</h3>
+          <ol>
+            <li><a href="https://www.deloitte.com/us/en/insights/industry/life-sciences/successful-drug-launch-strategy.html" target="_blank" rel="noopener">Deloitte. Successful drug launch strategy (149 drugs approved 2012–2017), 2020</a></li>
+            <li><a href="https://lumanity.com/wp-content/uploads/2026/05/Lumanity.2026-05-Launch-Excellence-Health-Check-Factsheet.pdf" target="_blank" rel="noopener">Lumanity. Launch Excellence Health Check factsheet, 2026</a></li>
+            <li><a href="https://www.iqvia.com/blogs/2025/02/launch-excellence-five-foundational-success-factors" target="_blank" rel="noopener">IQVIA. Launch excellence: five foundational success factors, 2025</a></li>
+            <li><a href="https://www.performdev.com/blog/the-hidden-launch-risk-no-one-talks-about-misalignment/" target="_blank" rel="noopener">PerformDev. The hidden launch risk: misalignment (Forrester 2024 figures)</a></li>
+            <li><a href="https://www.acnnewswire.com/press-release/english/105909/" target="_blank" rel="noopener">Sino Biopharm. 2025 annual results</a></li>
+            <li><a href="https://filingreader.com/news-wire/hongkong/2026-08-19/sino-biopharmaceutical-reports-revenue-growth-and-interim-dividend" target="_blank" rel="noopener">Sino Biopharm. H1 2026 results</a></li>
+            <li><a href="https://www.biospectrumasia.com/news/48/27626/gsk-enters-exclusive-collaboration-with-sbp-group-to-accelerate-hepatitis-b-treatment-in-china.html" target="_blank" rel="noopener">BioSpectrum Asia. GSK and SBP Group bepirovirsen collaboration, May 2026</a></li>
+            <li><a href="https://www.bioxconomy.com/partnering/sino-lands-second-mega-deal-with-az-2-1bn-licensing-agreement" target="_blank" rel="noopener">BioXconomy. Sino and AstraZeneca TQC3721 licence, July 2026</a></li>
+            <li><a href="https://www.morganlewis.com/pubs/2026/05/china-steps-up-anti-corruption-enforcement-with-new-regulatory-frameworks" target="_blank" rel="noopener">Morgan Lewis. China's 2026 medical representative measures</a></li>
+            <li><a href="https://www.gtlaw.com/en/insights/2026/2/china-on-the-move-key-takeaways-from-the-2025-nrdl-negotiations-and-adjustment" target="_blank" rel="noopener">Greenberg Traurig. Takeaways from the 2025 NRDL negotiations</a></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+<footer>
+  <div class="wrap">
+    <span>T-Minus is a student venture prototype (project PAI-051, IIHMR University, Jaipur). Not affiliated with or endorsed by Sino Biopharmaceutical, CTTQ or GSK.</span>
+    <span>Question banks and team results are illustrative demonstrations, not company or clinical data.</span>
+  </div>
+</footer>
+<div id="tip" hidden></div>
+<script>
+/* T-Minus — quiz content + readiness simulation engine (no DOM) */
+const Engine = (() => {
+  // ---------- seeded random numbers: every figure on screen is reproducible ----------
+  function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  function randn(rng) { let u = 0, v = 0; while (u === 0) u = rng(); while (v === 0) v = rng(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+  function hash(s) { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+  const logit = p => Math.log(p / (1 - p)), sigm = x => 1 / (1 + Math.exp(-x));
+
+  // ---------- the launch team ----------
+  const FUNCS = [
+    { id: 'rep', name: 'Medical representatives', short: 'Reps', n: 180, over: 0.48 },
+    { id: 'kam', name: 'Sales managers and key account managers', short: 'Managers', n: 40, over: 0.42 },
+    { id: 'msl', name: 'Medical affairs and MSLs', short: 'Medical', n: 24, over: 0.28 },
+    { id: 'acc', name: 'Market access and pricing', short: 'Access', n: 16, over: 0.32 },
+    { id: 'mkt', name: 'Brand marketing', short: 'Marketing', n: 12, over: 0.44 },
+    { id: 'sup', name: 'Supply chain and distribution', short: 'Supply', n: 14, over: 0.30 },
+    { id: 'pv', name: 'Pharmacovigilance and quality', short: 'PV', n: 8, over: 0.20 },
+    { id: 'lead', name: 'Launch leadership', short: 'Leadership', n: 6, over: 0.50 }
+  ];
+  const PARTNER = { id: 'gsk', name: 'GSK partner team', short: 'GSK team', n: 30, over: 0.34, partner: true };
+
+  // Probability each function knows each area before launch training (T-120). Illustrative.
+  //              patient label access supply safety sixth
+  const BASE = {
+    rep:  [0.52, 0.48, 0.30, 0.34, 0.55, 0.46],
+    kam:  [0.58, 0.54, 0.46, 0.40, 0.56, 0.50],
+    msl:  [0.74, 0.80, 0.34, 0.26, 0.72, 0.56],
+    acc:  [0.56, 0.50, 0.76, 0.42, 0.50, 0.46],
+    mkt:  [0.72, 0.60, 0.44, 0.30, 0.46, 0.58],
+    sup:  [0.30, 0.30, 0.42, 0.78, 0.46, 0.36],
+    pv:   [0.40, 0.62, 0.26, 0.30, 0.86, 0.48],
+    lead: [0.70, 0.60, 0.56, 0.46, 0.56, 0.56],
+    gsk:  [0.66, 0.72, 0.28, 0.28, 0.78, 0.36]
+  };
+
+  const AREAS = [
+    { id: 'patient', name: 'Target patient', owner: 'Brand marketing lead', strategic: true },
+    { id: 'label', name: 'Label and claims', owner: 'Head of medical affairs' },
+    { id: 'access', name: 'Access and listing', owner: 'Market access lead' },
+    { id: 'supply', name: 'Ordering and supply', owner: 'Supply chain lead' },
+    { id: 'safety', name: 'Safety reporting', owner: 'Head of pharmacovigilance' },
+    { id: 'sixth', name: 'Sixth area', owner: '', strategic: true }
+  ];
+
+  const PULSES = [
+    { id: 'T-120', label: 'T-120', when: '4 months before launch' },
+    { id: 'T-60', label: 'T-60', when: '2 months before launch' },
+    { id: 'T-30', label: 'T-30', when: '1 month before launch' },
+    { id: 'T+30', label: 'T+30', when: '1 month after launch' },
+    { id: 'T+90', label: 'T+90', when: '3 months after launch' }
+  ];
+
+  // ---------- launches and their question banks (illustrative launch truth sheets) ----------
+  const SAFETY_Q = drug => ({
+    area: 'safety',
+    text: `A patient mentions a side effect of ${drug} to you during a clinic visit. Under the company SOP, how fast must it reach pharmacovigilance?`,
+    options: ['Within 24 hours of you hearing about it', 'In your next monthly field report', 'Only after the doctor confirms the drug caused it', 'Only if the event is serious'],
+    correct: 0,
+    source: 'Pharmacovigilance SOP (demo), section 3.1',
+    lesson: 'Every adverse event any employee hears about is reported within 24 hours, whether or not it looks serious or drug-related. Causality is judged by pharmacovigilance, not the field.'
+  });
+
+  const CASES = {
+    liver: {
+      id: 'liver', area: 'Liver disease', title: 'Bepirovirsen · chronic hepatitis B', short: 'Bepirovirsen',
+      blurb: 'Partnered launch with GSK: CTTQ imports, distributes and promotes; GSK keeps the marketing authorisation and pharmacovigilance.',
+      setting: '5,000+ medical centres · Alliance Mode', mod: [-0.35, -0.30, -0.10, -0.15, 0, -0.25], partner: true,
+      sixth: { name: 'Partner hand-offs', owner: 'Alliance manager (CTTQ and GSK)' },
+      questions: [
+        { area: 'patient', text: 'Which patients are the year-1 priority in the launch plan?',
+          options: ['Adults on stable nucleos(t)ide analogue therapy with low surface-antigen levels, at hepatology centres', 'Every newly diagnosed hepatitis B patient, before any antiviral', 'Patients with decompensated cirrhosis', 'Any patient who asks for a shorter treatment'],
+          correct: 0, source: 'Launch truth sheet (demo), section 2', lesson: 'Year 1 focuses on adults already on nucleos(t)ide analogue therapy with low surface-antigen levels, treated at hepatology centres of excellence.' },
+        { area: 'label', text: 'A hepatologist asks whether bepirovirsen "cures" hepatitis B. What is the approved way to answer?',
+          options: ['Yes, it cures hepatitis B in most patients', 'Describe the functional-cure endpoint and rate exactly as the approved label states, then offer an MSL follow-up', 'It works for everyone on long-term therapy', 'Avoid the question and move to the next topic'],
+          correct: 1, source: 'Launch truth sheet (demo), section 3', lesson: 'Efficacy is described only with the endpoints and rates stated in the approved label. Never call it a cure for all patients; route detailed questions to an MSL.' },
+        { area: 'access', text: 'The drug is approved, but a target hospital has not listed it yet. What is the first step in the access plan?',
+          options: ['Ask the rep to push the department head to prescribe anyway', 'The key account manager submits the listing dossier to the pharmacy and therapeutics committee, with medical support', 'Wait for the next NRDL round before contacting the hospital', 'Offer the hospital free stock to speed up listing'],
+          correct: 1, source: 'Access plan (demo), section 4', lesson: 'Listing starts with the key account manager filing the dossier with the hospital pharmacy and therapeutics committee, supported by medical affairs. Free stock or benefits to secure listing are prohibited.' },
+        { area: 'supply', text: 'Where can a patient fill a prescription if the hospital pharmacy does not stock the drug yet?',
+          options: ['Nowhere; the patient waits for hospital listing', 'At a designated DTP pharmacy named in the distribution plan', 'Any retail pharmacy, with stock ordered by the rep', 'The rep delivers it to the patient'],
+          correct: 1, source: 'Distribution plan (demo), section 5', lesson: 'Before hospital listing, prescriptions are filled at the designated DTP (direct-to-patient) pharmacies in the distribution plan. Field staff never handle stock.' },
+        SAFETY_Q('bepirovirsen'),
+        { area: 'sixth', text: 'Which company holds pharmacovigilance duties for bepirovirsen in mainland China?',
+          options: ['CTTQ, because it promotes the product', 'GSK; CTTQ forwards every report through the agreed alliance hand-off', 'The treating hospital', 'The DTP pharmacy that dispensed it'],
+          correct: 1, source: 'GSK–SBP collaboration terms (BioSpectrum Asia, May 2026)', lesson: 'GSK keeps the marketing authorisation, regulatory, quality and pharmacovigilance responsibilities. CTTQ staff forward any report through the alliance hand-off within 24 hours.' }
+      ]
+    },
+    onc: {
+      id: 'onc', area: 'Oncology', title: 'Anlotinib · new indication', short: 'Anlotinib',
+      blurb: 'A new indication for an established brand (Focus V, 10 approved indications). Existing reach, new label boundaries.',
+      setting: 'Top 300 oncology centres · Existing brand', mod: [0.10, 0.25, -0.20, 0.45, 0.10, 0.05], partner: false,
+      sixth: { name: 'Objections', owner: 'Sales training lead with medical affairs' },
+      questions: [
+        { area: 'patient', text: 'What is the year-1 focus for the new indication?',
+          options: ['The approved line of therapy in the new tumour type, in the top 300 centres already prescribing the brand', 'Every oncologist in China from launch day', 'Community clinics first, then cancer centres', 'Any patient outside the label if a centre asks'],
+          correct: 0, source: 'Launch truth sheet (demo), section 2', lesson: 'Year 1 targets the approved line of therapy in the new tumour type, starting with the 300 centres that already prescribe the brand.' },
+        { area: 'label', text: 'An oncologist asks about using the drug in a tumour type that is not in the label. What do you do?',
+          options: ['Share the latest conference data that supports it', 'Do not discuss it; log the enquiry and refer it to medical information', 'Say other centres already use it that way', 'Suggest a lower dose for that tumour type'],
+          correct: 1, source: 'Promotional compliance policy (demo), section 1.4', lesson: 'Off-label use is never discussed by field staff. Log the unsolicited enquiry and refer it to medical information, which answers in writing.' },
+        { area: 'access', text: 'The brand is already on the NRDL for earlier indications. What happens to reimbursement for the new indication?',
+          options: ['It is reimbursed automatically from launch day', 'It needs its own NRDL indication update; until then patients pay out of pocket or use commercial insurance', 'Each hospital decides whether to reimburse it', 'Reimbursement only applies to injectable forms'],
+          correct: 1, source: 'Access plan (demo), section 3', lesson: 'NRDL reimbursement is tied to listed indications. The new indication needs its own NRDL update; the access plan covers self-pay and commercial insurance until then.' },
+        { area: 'supply', text: 'How do hospitals order product for the new indication?',
+          options: ['Through the existing packs and distributor codes; no new SKU is needed', 'Through a new SKU that distributors do not carry yet', 'Directly from the rep', 'Only through an import licence'],
+          correct: 0, source: 'Distribution plan (demo), section 2', lesson: 'The new indication uses the approved packs already in distributor systems, so hospitals order through their usual codes.' },
+        SAFETY_Q('anlotinib'),
+        { area: 'sixth', text: 'A doctor says: "I already use this drug in later lines. Why use it here?" Which response is approved?',
+          options: ['Say the competitor is unsafe', 'Present the new indication\'s efficacy and safety data from the approved label, and state the reimbursement status plainly', 'Offer a sponsored conference trip', 'Promise the NRDL update will come next month'],
+          correct: 1, source: 'Objection handling guide (demo), card 4', lesson: 'Answer with the approved data for the new indication and be plain about reimbursement. Never disparage competitors, promise policy outcomes or offer benefits.' }
+      ]
+    },
+    resp: {
+      id: 'resp', area: 'Respiratory', title: 'TQC3721 · COPD in China', short: 'TQC3721',
+      blurb: 'Inhaled PDE3/4 inhibitor. Sino kept China rights when AstraZeneca licensed it outside China (July 2026). Demo of a future launch.',
+      setting: 'Specialist start, county follow-up · New class for the team', mod: [-0.15, -0.20, -0.35, -0.25, 0, -0.30], partner: false,
+      sixth: { name: 'Objections', owner: 'Sales training lead with medical affairs' },
+      questions: [
+        { area: 'patient', text: 'Which patients are the year-1 priority in the launch plan?',
+          options: ['Adults with moderate-to-severe COPD who stay symptomatic on their current inhaled maintenance therapy', 'Every patient with a cough', 'Children with asthma', 'Patients during an acute exacerbation in the emergency room'],
+          correct: 0, source: 'Launch truth sheet (demo), section 2', lesson: 'Year 1 focuses on adults with moderate-to-severe COPD who remain symptomatic on their current inhaled maintenance therapy.' },
+        { area: 'label', text: 'What must every rep be able to show a respiratory physician at the first call?',
+          options: ['The device steps exactly as set out in the approved patient leaflet', 'A home-made video of a patient using it', 'The price comparison with other inhalers', 'Data from studies in other diseases'],
+          correct: 0, source: 'Launch truth sheet (demo), section 3', lesson: 'Device technique drives outcomes in COPD. Reps demonstrate only the steps in the approved patient leaflet.' },
+        { area: 'access', text: 'Where will most patients collect repeat prescriptions after a specialist starts treatment?',
+          options: ['Only at the tertiary hospital that started it', 'At county and primary-care hospitals, so county listing is in the access plan', 'Online only', 'At the rep\'s office'],
+          correct: 1, source: 'Access plan (demo), section 5', lesson: 'Specialists start treatment; repeat prescriptions move to county and primary-care hospitals, so the plan includes county listing from launch.' },
+        { area: 'supply', text: 'Which channel supplies county hospitals?',
+          options: ['The tier-2 distributors named in the distribution plan', 'The rep collects stock from the warehouse', 'Patients order directly from the factory', 'The tertiary hospital sends stock on'],
+          correct: 0, source: 'Distribution plan (demo), section 3', lesson: 'County hospitals are served by the tier-2 distributors named in the distribution plan.' },
+        SAFETY_Q('TQC3721'),
+        { area: 'sixth', text: 'A physician says: "My patients already use two inhalers. Why add another mechanism?" Which response is approved?',
+          options: ['Explain the dual bronchodilator and anti-inflammatory mechanism with the approved data, and when it is appropriate', 'Say the current inhalers stop working over time', 'Offer free samples for the whole practice', 'Suggest stopping their current inhalers'],
+          correct: 0, source: 'Objection handling guide (demo), card 2', lesson: 'Explain the mechanism and the approved data, and position it as add-on therapy where appropriate. Never advise stopping other maintenance therapy.' }
+      ]
+    }
+  };
+
+  // ---------- simulation ----------
+  const P_TRAIN = [0, 0.55, 0.95, 1.10, 1.15];    // cumulative training delivered by each pulse
+  const P_FORGET = [0, 0, 0, 0.05, 0.22];         // forgetting after launch without reinforcement
+  const P_REM = [0, 0.50, 0.95, 1.20, 1.40];      // cumulative effect of targeted micro-lessons
+
+  function teamFor(c, g) { return c.partner && g.alliance ? [...FUNCS, PARTNER] : FUNCS; }
+
+  // Expected answer mix per function, integrated over a 9-point grid of individual ability
+  // (analytic, so sliders move the results smoothly and small teams do not add sampling noise).
+  const GRID = [-1.593, -0.967, -0.589, -0.282, 0, 0.282, 0.589, 0.967, 1.593].map(z => 0.55 * z);
+  function simulate(caseId, g, pulseIdx, remediation) {
+    const c = CASES[caseId], team = teamFor(c, g), Q = c.questions;
+    const clar = (g.clarity - 50) / 50;             // -1 .. +1
+    const tf = g.hours / 16;
+    const favW = 0.50 + 0.40 * (1 - g.clarity / 100); // how strongly wrong answers cluster on one distractor
+    const byF = {};
+    team.forEach(f => {
+      const nResp = Math.max(1, Math.round(f.n * g.part / 100));
+      const counts = [], sureCorrect = [], sureWrong = [], pq = [];
+      Q.forEach((q, qi) => {
+        const ai = AREAS.findIndex(a => a.id === q.area);
+        const base = BASE[f.id][ai];
+        let L = logit(base) + c.mod[ai] + 0.95 * tf * P_TRAIN[pulseIdx] - (remediation ? 0 : P_FORGET[pulseIdx]);
+        if (AREAS[ai].strategic) L += 0.75 * clar;
+        if (f.partner && q.area === 'sixth') L -= 0.25;
+        if (remediation) L += P_REM[pulseIdx] * 1.7 * (1 - base);
+        let pc = 0, sc = 0, sw = 0;
+        GRID.forEach(z => { const p = sigm(L + z); pc += p; sc += p * (0.55 + 0.35 * p); sw += (1 - p) * f.over * (0.6 + 0.4 * (1 - p)); });
+        pc /= GRID.length; sc /= GRID.length; sw /= GRID.length;
+        const wrong = [0, 1, 2, 3].filter(i => i !== q.correct), fav = wrong[hash(f.id + q.text) % 3];
+        const mix = [0, 0, 0, 0]; mix[q.correct] = pc;
+        wrong.forEach(i => { mix[i] = (1 - pc) * (i === fav ? favW : (1 - favW) / 2); });
+        counts.push(mix.map(v => v * nResp)); sureCorrect.push(sc * nResp); sureWrong.push(sw * nResp); pq.push(L);
+      });
+      byF[f.id] = { n: nResp, counts, sureCorrect, sureWrong, L: pq };
+    });
+    return { c, team, Q, byF };
+  }
+
+  // A named roster of simulated respondents (for the evidence ledger export only)
+  const REGIONS = ['North', 'East', 'South', 'West', 'Central'];
+  function roster(a) {
+    const rng = mulberry32(hash(a.caseId + '|' + a.pulseIdx + '|' + JSON.stringify(a.g)));
+    const rows = []; let id = 1;
+    a.team.forEach(f => {
+      const b = a.byF[f.id];
+      for (let r = 0; r < b.n; r++) {
+        const z = 0.55 * randn(rng); let right = 0, cw = 0; const missed = [];
+        a.Q.forEach((q, qi) => { const p = sigm(b.L[qi] + z); if (rng() < p) right++; else { missed.push(q.area); if (rng() < f.over * (0.6 + 0.4 * (1 - p))) cw++; } });
+        rows.push({ id: 'SB-' + String(id++).padStart(4, '0'), f, region: REGIONS[(id + r) % 5], right, cw, missed });
+      }
+    });
+    return rows;
+  }
+
+  function tv(a, b) { const sa = a.reduce((x, y) => x + y, 0) || 1, sb = b.reduce((x, y) => x + y, 0) || 1; let d = 0; for (let i = 0; i < 4; i++) d += Math.abs(a[i] / sa - b[i] / sb); return d / 2; }
+
+  function metrics(sim, g) {
+    const { c, team, Q, byF } = sim;
+    const nQ = Q.length;
+    // accuracy per function x area
+    const heat = team.map(f => Q.map((q, qi) => byF[f.id].counts[qi][q.correct] / byF[f.id].n));
+    // alignment gap per question: mean pairwise total-variation distance between functions' answer mixes
+    const gaps = Q.map((q, qi) => {
+      let sum = 0, k = 0, worst = { d: -1 };
+      for (let i = 0; i < team.length; i++) for (let j = i + 1; j < team.length; j++) {
+        const d = tv(byF[team[i].id].counts[qi], byF[team[j].id].counts[qi]); sum += d; k++;
+        if (d > worst.d) worst = { d, a: team[i], b: team[j] };
+      }
+      // most common wrong answer and who holds it
+      const tot = [0, 0, 0, 0]; team.forEach(f => byF[f.id].counts[qi].forEach((v, i) => tot[i] += v));
+      const wrongIdx = [0, 1, 2, 3].filter(i => i !== q.correct).sort((a, b) => tot[b] - tot[a])[0];
+      let holder = null, hv = -1; team.forEach(f => { const s = byF[f.id].counts[qi][wrongIdx] / byF[f.id].n; if (s > hv) { hv = s; holder = f; } });
+      return { gap: 100 * sum / k, worst, wrongIdx, wrongShare: tot[wrongIdx] / tot.reduce((x, y) => x + y, 0), holder, holderShare: hv };
+    });
+    const totalN = team.reduce((s, f) => s + byF[f.id].n, 0);
+    let correct = 0, sureWrong = 0, sureRight = 0, all = 0;
+    team.forEach(f => Q.forEach((q, qi) => { correct += byF[f.id].counts[qi][q.correct]; sureWrong += byF[f.id].sureWrong[qi]; sureRight += byF[f.id].sureCorrect[qi]; all += byF[f.id].n; }));
+    const acc = 100 * correct / all, cw = 100 * sureWrong / all, agi = gaps.reduce((s, x) => s + x.gap, 0) / nQ;
+    const lri = Math.max(0, Math.min(100, 0.6 * acc + 0.25 * (100 - agi) + 0.15 * (100 - 2 * cw)));
+    // calibration by function: right+sure, right+unsure, wrong+unsure, wrong+sure
+    const calib = team.map(f => { const b = byF[f.id]; let rs = 0, ru = 0, ws = 0, wu = 0, n = b.n * nQ;
+      Q.forEach((q, qi) => { const r = b.counts[qi][q.correct]; rs += b.sureCorrect[qi]; ru += r - b.sureCorrect[qi]; ws += b.sureWrong[qi]; wu += (b.n - r) - b.sureWrong[qi]; });
+      return { f, rs: rs / n, ru: ru / n, wu: wu / n, ws: ws / n }; });
+    // per area verdicts (area = one question per area in each bank)
+    const areas = Q.map((q, qi) => {
+      const a = AREAS.find(x => x.id === q.area);
+      const accA = 100 * team.reduce((s, f) => s + byF[f.id].counts[qi][q.correct], 0) / totalN;
+      const cwA = 100 * team.reduce((s, f) => s + byF[f.id].sureWrong[qi], 0) / totalN;
+      const gp = gaps[qi].gap;
+      const status = accA >= 80 && gp <= 12 && cwA <= 6 ? 'go' : (accA < 65 || gp > 22 || cwA > 12) ? 'fix' : 'watch';
+      const weak = team.map((f, fi) => ({ f, v: heat[fi][qi] })).filter(x => x.v < 0.7).sort((x, y) => x.v - y.v);
+      return { qi, q, id: q.area, name: q.area === 'sixth' ? c.sixth.name : a.name, owner: q.area === 'sixth' ? c.sixth.owner : a.owner, acc: accA, cw: cwA, gap: gp, status, weak, risk: (100 - accA) + gp + 2 * cwA };
+    });
+    const nFix = areas.filter(a => a.status === 'fix').length;
+    const nWatch = areas.filter(a => a.status === 'watch').length;
+    const verdict = (lri < 65 || nFix >= 2) ? 'fix' : (lri >= 80 && nFix === 0 && nWatch <= 2 && g.part >= 70) ? 'go' : 'watch';
+    return { team, Q, heat, gaps, acc, cw, agi, lri, calib, areas, verdict, nWatch, totalN, invited: team.reduce((s, f) => s + f.n, 0), byF, nFix };
+  }
+
+  function analyze(caseId, g, pulseIdx) {
+    const cur = metrics(simulate(caseId, g, pulseIdx, g.remediation), g);
+    const traj = { on: [], off: [] };
+    for (let k = 0; k < PULSES.length; k++) {
+      traj.on.push(metrics(simulate(caseId, g, k, true), g).lri);
+      traj.off.push(metrics(simulate(caseId, g, k, false), g).lri);
+    }
+    return { ...cur, traj, caseId, pulseIdx, g };
+  }
+
+  // ---------- your own quiz ----------
+  function score(answers, Q) {
+    let right = 0, cw = 0; answers.forEach((a, i) => { if (a == null) return; if (a.choice === Q[i].correct) right++; else if (a.sure) cw++; });
+    return { right, cw, n: Q.length };
+  }
+
+  // ---------- citation lock for generated questions ----------
+  const norm = s => String(s || '').toLowerCase().replace(/[“”"'‘’]/g, '').replace(/[–—-]/g, '-').replace(/\s+/g, ' ').trim();
+  function citationOk(quote, source) { const q = norm(quote); return q.length >= 12 && norm(source).includes(q); }
+
+  const fmt0 = v => Math.round(v).toString();
+  const pct = v => Math.round(v) + '%';
+  return { FUNCS, PARTNER, AREAS, PULSES, CASES, analyze, teamFor, score, citationOk, roster, fmt0, pct, mulberry32, hash };
+})();
+if (typeof module !== 'undefined') module.exports = Engine;
+
+</script>
+<script>
+/* T-Minus — page UI */
+(() => {
+  const E = Engine, $ = s => document.querySelector(s);
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const r0 = v => Math.round(v);
+  const STAT = { go: ['good', '✓', 'Go'], watch: ['warning', '!', 'Watch'], fix: ['critical', '✕', 'Fix'] };
+  const pill = (st, sm, label) => { const [k, ic, t] = STAT[st]; return `<span class="pill ${k}${sm ? ' sm' : ''}"><span class="ic" aria-hidden="true">${ic}</span>${esc(label || t)}</span>`; };
+  const SHORT = { patient: 'Patient', label: 'Label', access: 'Access', supply: 'Supply', safety: 'Safety' };
+  const areaShort = (c, id) => id === 'sixth' ? (c.partner ? 'Partner' : 'Objections') : SHORT[id];
+  const DEF = () => ({ hours: 12, clarity: 55, part: 85, alliance: true, remediation: true });
+
+  const S = { caseId: 'liver', pulse: 1, g: DEF(), heroQ: 2, tables: {}, last: null,
+    quiz: { role: 'rep', i: 0, answers: [], pick: null, sure: null, checked: false },
+    sample: null, downloads: null, gen: { ctl: null, items: null } };
+
+  // ---------- launches ----------
+  function renderCases() {
+    $('#cases').innerHTML = Object.values(E.CASES).map(c => `<button class="case" data-id="${c.id}" aria-pressed="${c.id === S.caseId}"><span class="area">${esc(c.area)}</span><b>${esc(c.title)}</b><span>${esc(c.blurb)}</span><em>${esc(c.setting)}</em></button>`).join('');
+  }
+  $('#cases').addEventListener('click', e => {
+    const b = e.target.closest('.case'); if (!b || b.dataset.id === S.caseId) return;
+    S.caseId = b.dataset.id; resetQuiz(); renderCases(); renderControls(); update();
+  });
+
+  // ---------- controls ----------
+  function slider(id, label, val, min, max, step, fmt) {
+    return `<div class="field"><label class="lab" for="${id}"><span>${esc(label)}</span><output id="${id}-o">${fmt(val)}</output></label><input type="range" id="${id}" min="${min}" max="${max}" step="${step}" value="${val}"></div>`;
+  }
+  const FMT = { hours: v => v + ' h', clarity: v => v + '/100', part: v => v + '%' };
+  function renderControls() {
+    const c = E.CASES[S.caseId], g = S.g, tr = S.last ? S.last.traj[g.remediation ? 'on' : 'off'] : [];
+    let h = `<div><h3>Launch countdown</h3><div class="radios" role="radiogroup" aria-label="Pulse">` +
+      E.PULSES.map((p, i) => `<label class="radio"><input type="radio" name="pulse" value="${i}" ${S.pulse === i ? 'checked' : ''}><span>${p.label}<small>${p.when}</small></span><span class="v" data-pv="${i}">${tr.length ? r0(tr[i]) : ''}</span></label>`).join('') +
+      `</div><p class="note" style="margin:6px 0 0">Figures on the right are the readiness index at each pulse.</p></div>`;
+    h += `<div><h3>Launch context</h3><div class="params">` +
+      slider('hours', 'Training hours before launch', g.hours, 4, 40, 2, FMT.hours) +
+      slider('clarity', 'Leadership clarity on positioning', g.clarity, 0, 100, 5, FMT.clarity) +
+      slider('part', 'Participation in the pulse', g.part, 40, 100, 5, FMT.part) + `</div></div>`;
+    h += `<div><h3>Programme</h3><div class="radios">
+      <label class="radio"><input type="checkbox" id="rem" ${g.remediation ? 'checked' : ''}><span>Micro-lessons after each pulse<small>Two-minute lessons sent to people who missed a question</small></span><span></span></label>` +
+      (c.partner ? `<label class="radio"><input type="checkbox" id="ally" ${g.alliance ? 'checked' : ''}><span>Include the GSK team<small>Alliance Mode: partner staff answer the same bank</small></span><span></span></label>` : '') +
+      `</div></div><button class="btn sm" id="reset">Reset inputs</button>`;
+    $('#controls').innerHTML = h;
+  }
+  let raf = 0; const schedule = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(update); };
+  $('#controls').addEventListener('input', e => {
+    const t = e.target;
+    if (t.name === 'pulse') { S.pulse = +t.value; schedule(); return; }
+    if (['hours', 'clarity', 'part'].includes(t.id)) { S.g[t.id] = +t.value; $('#' + t.id + '-o').value = FMT[t.id](+t.value); schedule(); return; }
+    if (t.id === 'rem') { S.g.remediation = t.checked; schedule(); return; }
+    if (t.id === 'ally') { S.g.alliance = t.checked; if (!t.checked && S.quiz.role === 'gsk') resetQuiz('rep'); schedule(); }
+  });
+  $('#controls').addEventListener('click', e => { if (e.target.id === 'reset') { S.g = DEF(); S.pulse = 1; renderControls(); update(); } });
+
+  // ---------- tooltip ----------
+  const tip = $('#tip');
+  function showTip(html, x, y) { tip.innerHTML = html; tip.hidden = false; const w = tip.offsetWidth, h = tip.offsetHeight; let L = x + 14, T = y + 14; if (L + w > innerWidth - 8) L = x - w - 14; if (T + h > innerHeight - 8) T = y - h - 14; tip.style.left = Math.max(8, L) + 'px'; tip.style.top = Math.max(8, T) + 'px'; }
+  const hideTip = () => { tip.hidden = true; };
+  function card(el, key, title, sub, legend, body, table) {
+    const showT = S.tables[key];
+    el.innerHTML = `<header><div><h4>${title}</h4><p class="sub">${sub}</p></div><button class="tbtn" data-t="${key}" aria-pressed="${!!showT}">${showT ? 'Chart' : 'Table'}</button></header>${showT ? `<div class="tablewrap">${table}</div>` : (legend ? `<div class="legend">${legend}</div>` : '') + body}`;
+  }
+  document.addEventListener('click', e => { const b = e.target.closest('.tbtn'); if (!b) return; S.tables[b.dataset.t] = !S.tables[b.dataset.t]; renderCharts(S.last); });
+  const mix = (v, lo = 0.3, hi = 0.95) => { const t = Math.max(0, Math.min(1, (v - lo) / (hi - lo))); return Math.round(8 + 82 * t); };
+
+  // ---------- charts ----------
+  function drawHeat(a) {
+    const c = E.CASES[S.caseId], el = $('#cHeat'), team = a.team, Q = a.Q;
+    const W = 420, lw = 78, top = 28, cw = (W - lw) / Q.length, ch = 26, H = top + team.length * ch + 4;
+    let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Share of each function answering each launch-critical area correctly">`;
+    Q.forEach((q, ci) => { s += `<text x="${lw + ci * cw + cw / 2}" y="18" text-anchor="middle" class="ink">${esc(areaShort(c, q.area))}</text>`; });
+    team.forEach((f, ri) => {
+      const y = top + ri * ch;
+      s += `<text x="${lw - 8}" y="${y + ch / 2 + 4}" text-anchor="end" class="ink">${esc(f.short)}</text>`;
+      Q.forEach((q, ci) => {
+        const v = a.heat[ri][ci], m = mix(v);
+        s += `<rect x="${(lw + ci * cw + 1).toFixed(1)}" y="${y + 1}" width="${(cw - 2).toFixed(1)}" height="${ch - 2}" rx="4" fill="color-mix(in oklab, var(--s1) ${m}%, var(--panel))" data-r="${ri}" data-c="${ci}"/>`;
+        s += `<text x="${(lw + ci * cw + cw / 2).toFixed(1)}" y="${y + ch / 2 + 4}" text-anchor="middle" class="cell${m > 52 ? ' on' : ''}" pointer-events="none">${r0(v * 100)}</text>`;
+      });
+    });
+    s += `</svg>`;
+    const legend = `<span><i style="background:color-mix(in oklab, var(--s1) 10%, var(--panel));border:1px solid var(--rule)"></i>30% or less right</span><span><i style="background:color-mix(in oklab, var(--s1) 50%, var(--panel))"></i>about 60%</span><span><i style="background:var(--s1)"></i>95% or more</span>`;
+    const table = `<table class="dt"><tr><th>Function</th>${Q.map(q => `<th>${esc(areaShort(c, q.area))}</th>`).join('')}</tr>${team.map((f, ri) => `<tr><td>${esc(f.name)}</td>${Q.map((q, ci) => `<td>${r0(a.heat[ri][ci] * 100)}%</td>`).join('')}</tr>`).join('')}</table>`;
+    card(el, 'heat', 'Who knows what', `Share of each function answering correctly, by launch-critical area, at ${E.PULSES[S.pulse].label}.`, legend, s, table);
+    const svg = el.querySelector('svg'); if (!svg) return;
+    svg.addEventListener('mousemove', ev => {
+      const r = ev.target.closest('rect[data-r]'); if (!r) return hideTip();
+      const ri = +r.dataset.r, ci = +r.dataset.c, f = team[ri], q = Q[ci], b = a.byF[f.id].counts[ci];
+      const wi = [0, 1, 2, 3].filter(i => i !== q.correct).sort((x, y) => b[y] - b[x])[0];
+      showTip(`<b>${esc(f.name)}</b><br>${esc(a.areas[ci].name)}: ${r0(a.heat[ri][ci] * 100)}% right<br>Most chosen wrong answer (${r0(b[wi] / a.byF[f.id].n * 100)}%): “${esc(q.options[wi])}”`, ev.clientX, ev.clientY);
+    });
+    svg.addEventListener('mouseleave', hideTip);
+  }
+
+  function drawGap(a) {
+    const el = $('#cGap'), rows = a.areas;
+    const W = 420, lw = 130, rw = 34, top = 26, bh = 20, gap = 12, H = top + rows.length * (bh + gap) + 6;
+    const max = Math.max(40, Math.ceil((Math.max(...rows.map(r => r.gap)) + 4) / 10) * 10), sx = v => lw + v / max * (W - lw - rw);
+    let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Alignment gap between functions for each launch-critical area">`;
+    [12, 22].forEach((v, i) => { s += `<line x1="${sx(v)}" x2="${sx(v)}" y1="${top - 6}" y2="${H - 4}" stroke="var(--muted)" stroke-dasharray="4 3"/><text x="${sx(v)}" y="${top - 12}" text-anchor="middle">${i ? 'Fix >22' : 'Go ≤12'}</text>`; });
+    s += `<line x1="${lw}" x2="${lw}" y1="${top - 6}" y2="${H - 4}" stroke="var(--axis)"/>`;
+    rows.forEach((r, i) => {
+      const y = top + i * (bh + gap), w = Math.max(2, sx(r.gap) - lw);
+      s += `<text x="${lw - 8}" y="${y + bh / 2 + 4}" text-anchor="end" class="ink">${esc(r.name)}</text>`;
+      s += `<path d="M${lw} ${y}h${w - 4}a4 4 0 0 1 4 4v${bh - 8}a4 4 0 0 1 -4 4h${-(w - 4)}z" fill="var(--s2)" data-i="${i}"/>`;
+      s += `<text x="${lw + w + 6}" y="${y + bh / 2 + 4}" class="strong">${r0(r.gap)}</text>`;
+    });
+    s += `</svg>`;
+    const table = `<table class="dt"><tr><th>Area</th><th>Gap</th><th>Most different pair</th><th>Most chosen wrong answer</th></tr>${rows.map((r, i) => { const g = a.gaps[i]; return `<tr><td>${esc(r.name)}</td><td>${r0(r.gap)}</td><td>${esc(g.worst.a.short)} vs ${esc(g.worst.b.short)}</td><td>${r0(g.wrongShare * 100)}% of all answers</td></tr>`; }).join('')}</table>`;
+    card(el, 'gap', 'Where functions disagree', 'Alignment gap: how differently the functions answer the same question (0 = identical, 100 = no overlap).', '', s, table);
+    const svg = el.querySelector('svg'); if (!svg) return;
+    svg.addEventListener('mousemove', ev => {
+      const p = ev.target.closest('path[data-i]'); if (!p) return hideTip();
+      const i = +p.dataset.i, g = a.gaps[i], q = a.Q[i];
+      showTip(`<b>${esc(rows[i].name)}</b>: gap ${r0(g.gap)}<br>${esc(g.worst.a.short)} and ${esc(g.worst.b.short)} differ most<br>Most chosen wrong answer: “${esc(q.options[g.wrongIdx])}” (${esc(g.holder.short)} ${r0(g.holderShare * 100)}%)`, ev.clientX, ev.clientY);
+    });
+    svg.addEventListener('mouseleave', hideTip);
+  }
+
+  function drawCal(a) {
+    const el = $('#cCal'), rows = a.calib;
+    const W = 420, lw = 78, rw = 40, top = 6, bh = 17, gap = 9, H = top + rows.length * (bh + gap) + 2, bw = W - lw - rw;
+    const SEG = [['rs', 'var(--s1)', 'Right and sure'], ['ru', 'color-mix(in oklab, var(--s1) 42%, var(--panel))', 'Right, not sure'], ['wu', 'color-mix(in oklab, var(--s2) 42%, var(--panel))', 'Wrong, not sure'], ['ws', 'var(--s2)', 'Wrong and sure']];
+    let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Confidence and accuracy of answers by function">`;
+    rows.forEach((r, i) => {
+      const y = top + i * (bh + gap); let x = lw;
+      s += `<text x="${lw - 8}" y="${y + bh / 2 + 4}" text-anchor="end" class="ink">${esc(r.f.short)}</text>`;
+      SEG.forEach(([k, col], si) => { const w = r[k] * bw; if (w <= 0.5) { x += w; return; } s += `<rect x="${x.toFixed(1)}" y="${y}" width="${Math.max(0.5, w - 2).toFixed(1)}" height="${bh}" rx="${si === 0 || si === 3 ? 4 : 1}" fill="${col}" data-i="${i}" data-k="${k}"/>`; x += w; });
+      s += `<text x="${W - rw + 8}" y="${y + bh / 2 + 4}" class="strong">${r0(r.ws * 100)}%</text>`;
+    });
+    s += `</svg>`;
+    const legend = SEG.map(([, col, l]) => `<span><i style="background:${col}"></i>${l}</span>`).join('');
+    const table = `<table class="dt"><tr><th>Function</th>${SEG.map(x => `<th>${x[2]}</th>`).join('')}</tr>${rows.map(r => `<tr><td>${esc(r.f.name)}</td>${SEG.map(([k]) => `<td>${r0(r[k] * 100)}%</td>`).join('')}</tr>`).join('')}</table>`;
+    card(el, 'cal', 'Who is confidently wrong', 'All answers by function. The figure on the right is the share wrong and marked Sure: the risk that reaches doctors.', legend, s, table);
+    const svg = el.querySelector('svg'); if (!svg) return;
+    svg.addEventListener('mousemove', ev => {
+      const t = ev.target.closest('rect[data-k]'); if (!t) return hideTip();
+      const r = rows[+t.dataset.i], seg = SEG.find(x => x[0] === t.dataset.k);
+      showTip(`<b>${esc(r.f.name)}</b><br>${seg[2]}: ${r0(r[seg[0]] * 100)}% of answers`, ev.clientX, ev.clientY);
+    });
+    svg.addEventListener('mouseleave', hideTip);
+  }
+
+  function drawTraj(a) {
+    const el = $('#cTraj'), on = a.traj.on, off = a.traj.off, P = E.PULSES;
+    const W = 420, H = 230, m = { l: 30, r: 76, t: 12, b: 28 }, pw = W - m.l - m.r, ph = H - m.t - m.b;
+    const y0 = 40, y1 = 100, sx = i => m.l + i * pw / (P.length - 1), sy = v => m.t + (y1 - v) / (y1 - y0) * ph;
+    let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Readiness index across the launch countdown, with and without micro-lessons">`;
+    [40, 60, 80, 100].forEach(v => { s += `<line x1="${m.l}" x2="${m.l + pw}" y1="${sy(v)}" y2="${sy(v)}" stroke="var(--grid)"/><text x="${m.l - 6}" y="${sy(v) + 3.5}" text-anchor="end">${v}</text>`; });
+    s += `<rect x="${sx(S.pulse) - 16}" y="${m.t}" width="32" height="${ph}" fill="var(--accent)" opacity=".08"/>`;
+    s += `<line x1="${m.l}" x2="${m.l + pw}" y1="${sy(80)}" y2="${sy(80)}" stroke="var(--muted)" stroke-dasharray="4 3"/><text x="${m.l + 4}" y="${sy(80) - 5}">Go at 80</text>`;
+    P.forEach((p, i) => { s += `<text x="${sx(i)}" y="${H - m.b + 16}" text-anchor="middle" class="${i === S.pulse ? 'strong' : 'ink'}">${p.label}</text>`; });
+    const line = (arr, col, dash) => `<path d="${arr.map((v, i) => (i ? 'L' : 'M') + sx(i).toFixed(1) + ' ' + sy(v).toFixed(1)).join('')}" fill="none" stroke="${col}" stroke-width="2" ${dash ? 'stroke-dasharray="6 4"' : ''} stroke-linejoin="round"/>` + arr.map((v, i) => `<circle cx="${sx(i).toFixed(1)}" cy="${sy(v).toFixed(1)}" r="${i === S.pulse ? 5 : 3.5}" fill="${col}" stroke="var(--surface)" stroke-width="2"/>`).join('');
+    s += line(off, 'var(--s2)', true) + line(on, 'var(--s1)', false);
+    const lo = sy(on.at(-1)), lf = sy(off.at(-1)), sep = Math.abs(lo - lf) < 26 ? (lo < lf ? [-7, 7] : [7, -7]) : [0, 0];
+    s += `<text x="${sx(4) + 9}" y="${lo + 4 + sep[0]}" class="strong">With ${r0(on.at(-1))}</text><text x="${sx(4) + 9}" y="${lf + 4 + sep[1]}" class="ink">Without ${r0(off.at(-1))}</text>`;
+    s += `<rect x="${m.l - 10}" y="${m.t}" width="${pw + 20}" height="${ph}" fill="transparent" class="hit"/><line id="xh" x1="0" x2="0" y1="${m.t}" y2="${m.t + ph}" stroke="var(--axis)" visibility="hidden"/></svg>`;
+    const legend = `<span><i class="line" style="background:var(--s1)"></i>With micro-lessons</span><span><i class="dashs2"></i>Without micro-lessons</span><span><i class="dash"></i>Go threshold</span>`;
+    const table = `<table class="dt"><tr><th>Pulse</th><th>With micro-lessons</th><th>Without</th></tr>${P.map((p, i) => `<tr><td>${p.label} (${p.when})</td><td>${r0(on[i])}</td><td>${r0(off[i])}</td></tr>`).join('')}</table>`;
+    card(el, 'traj', 'Readiness across the countdown', 'Launch readiness index at each pulse under the current settings.', legend, s, table);
+    const svg = el.querySelector('svg'); if (!svg) return;
+    svg.addEventListener('mousemove', ev => {
+      const pt = svg.createSVGPoint(); pt.x = ev.clientX; pt.y = ev.clientY; const p = pt.matrixTransform(svg.getScreenCTM().inverse());
+      const i = Math.max(0, Math.min(P.length - 1, Math.round((p.x - m.l) / (pw / (P.length - 1)))));
+      const xh = svg.querySelector('#xh'); xh.setAttribute('x1', sx(i)); xh.setAttribute('x2', sx(i)); xh.setAttribute('visibility', 'visible');
+      showTip(`<b>${P[i].label}</b> · ${P[i].when}<br>With micro-lessons: ${r0(on[i])}<br>Without: ${r0(off[i])}`, ev.clientX, ev.clientY);
+    });
+    svg.addEventListener('mouseleave', () => { hideTip(); const xh = svg.querySelector('#xh'); if (xh) xh.setAttribute('visibility', 'hidden'); });
+  }
+  function renderCharts(a) { if (!a) return; drawHeat(a); drawGap(a); drawCal(a); drawTraj(a); }
+
+  // ---------- summary ----------
+  function renderSummary(a) {
+    const c = E.CASES[S.caseId], p = E.PULSES[S.pulse];
+    const worst = [...a.areas].sort((x, y) => y.risk - x.risk)[0];
+    const nF = a.nFix, nW = a.nWatch, nG = a.areas.length - nF - nW;
+    const head = a.verdict === 'go' ? 'Ready to launch on these measures.' : a.verdict === 'watch' ? 'Close, with areas to watch.' : 'Fix before launch.';
+    $('#verdict').innerHTML = `${pill(a.verdict, false, a.verdict === 'go' ? 'Go' : a.verdict === 'watch' ? 'Watch' : 'Fix')}<p><b>${head}</b> ${esc(c.short)} at ${p.label}: ${nG} of 6 areas at Go, ${nW} at Watch, ${nF} at Fix. Biggest risk: ${esc(worst.name)} (${r0(worst.acc)}% right, gap ${r0(worst.gap)}).${a.g.part < 70 ? ' Participation is below 70%, so the result cannot be Go.' : ''}</p>`;
+    const tile = (l, v, s) => `<div class="panel tile"><div class="l">${l}</div><div class="v">${v}</div><div class="s">${s}</div></div>`;
+    $('#tiles').innerHTML =
+      tile('Readiness index', `${r0(a.lri)}<small> /100</small>`, 'Go at 80 or more') +
+      tile('Accuracy', `${r0(a.acc)}%`, 'Answers matching the truth sheet') +
+      tile('Alignment gap', `${r0(a.agi)}`, 'Average across 6 areas') +
+      tile('Confidently wrong', `${r0(a.cw)}%`, 'Wrong and marked Sure') +
+      tile('Participation', `${a.totalN}<small> of ${a.invited}</small>`, `${a.team.length} functions invited`);
+    document.querySelectorAll('[data-pv]').forEach(x => { x.textContent = r0(a.traj[S.g.remediation ? 'on' : 'off'][+x.dataset.pv]); });
+  }
+
+  // ---------- hero ----------
+  function renderHero(a) {
+    const c = E.CASES[S.caseId], p = E.PULSES[S.pulse];
+    if (S.heroQ >= a.Q.length) S.heroQ = 0;
+    const qi = S.heroQ, q = a.Q[qi], g = a.gaps[qi], ar = a.areas[qi];
+    $('#hArea').innerHTML = a.Q.map((x, i) => `<button data-q="${i}" aria-pressed="${i === qi}">${esc(areaShort(c, x.area))}</button>`).join('');
+    $('#hCase').textContent = `${c.short} · ${p.label}`;
+    $('#hSays').innerHTML = `<dt>Question</dt><dd>${esc(q.text)}</dd><dt>Approved</dt><dd>${esc(q.options[q.correct])}</dd><dt>Source</dt><dd>${esc(q.source)}</dd>`;
+    $('#hWho').textContent = `Share choosing the approved answer at ${p.label}`;
+    $('#hRows').innerHTML = a.team.map((f, fi) => { const v = a.heat[fi][qi]; return `<div class="arow"><span title="${esc(f.name)}">${esc(f.short)}</span><div class="abar" role="img" aria-label="${esc(f.name)} ${r0(v * 100)}%"><i class="${v < 0.65 ? 'low' : ''}" style="width:${(v * 100).toFixed(1)}%"></i></div><b>${r0(v * 100)}%</b></div>`; }).join('');
+    $('#hFoot').innerHTML = `${pill(ar.status, false, `Gap ${r0(g.gap)} · ${STAT[ar.status][2]}`)}<p>Most chosen wrong answer: “${esc(q.options[g.wrongIdx])}”, picked by ${r0(g.holderShare * 100)}% of ${esc(g.holder.short)}. Orange bars are below 65%.</p>`;
+  }
+  $('#hArea').addEventListener('click', e => { const b = e.target.closest('button[data-q]'); if (!b) return; S.heroQ = +b.dataset.q; renderHero(S.last); });
+
+  // ---------- take the pulse ----------
+  function resetQuiz(role) { S.quiz = { role: role || S.quiz.role, i: 0, answers: [], pick: null, sure: null, checked: false }; }
+  function renderQuiz() {
+    const c = E.CASES[S.caseId], team = E.teamFor(c, S.g), Q = c.questions, z = S.quiz;
+    if (!team.find(f => f.id === z.role)) z.role = 'rep';
+    const done = z.answers.length === Q.length && z.i >= Q.length;
+    const dots = Q.map((q, i) => { const a = z.answers[i]; const cls = a ? (a.choice === q.correct ? 'ok' : a.sure ? 'cw' : 'no') : (i === z.i && !done ? 'cur' : ''); return `<i class="${cls}" title="${esc(areaShort(c, q.area))}">${i + 1}</i>`; }).join('');
+    $('#qside').innerHTML = `<div><h3>Answer as</h3><div class="radios" role="radiogroup" aria-label="Your role">${team.map(f => `<label class="radio"><input type="radio" name="qrole" value="${f.id}" ${f.id === z.role ? 'checked' : ''}><span>${esc(f.name)}</span><span></span></label>`).join('')}</div></div>
+      <div><h3>Progress</h3><div class="dots">${dots}</div><p class="note" style="margin:8px 0 0">Green: right. Amber: wrong, not sure. Red: confidently wrong.</p></div>
+      <p class="note" style="margin:0">Launch: ${esc(c.title)}. Your answers stay on this page and are not sent anywhere.</p>`;
+    const el = $('#qcard'), a = S.last, fi = a ? a.team.findIndex(f => f.id === z.role) : -1;
+    if (done) {
+      const sc = E.score(z.answers, Q), fAvg = fi >= 0 ? a.heat[fi].reduce((s, v) => s + v, 0) / Q.length * 100 : null;
+      el.innerHTML = `<div class="meta"><span>Your pulse</span><span>${esc(c.short)}</span><span>${esc(team.find(f => f.id === z.role).name)}</span></div>
+        <p class="head">You matched ${sc.right} of ${sc.n} launch truths${sc.cw ? `, with ${sc.cw} confidently wrong answer${sc.cw > 1 ? 's' : ''}` : ' and no confidently wrong answers'}.</p>
+        <div class="sumtiles"><div><b>${r0(sc.right / sc.n * 100)}%</b><span>Your accuracy</span></div><div><b>${fAvg == null ? '–' : r0(fAvg) + '%'}</b><span>Your function at ${E.PULSES[S.pulse].label}</span></div><div><b>${r0(a.acc)}%</b><span>Whole launch team</span></div></div>
+        <ul class="alist">${Q.map((q, i) => { const x = z.answers[i], ok = x.choice === q.correct; return `<li>${pill(ok ? 'go' : x.sure ? 'fix' : 'watch', true, ok ? 'Right' : x.sure ? 'Sure, wrong' : 'Wrong')}<span>${esc(q.text)}<small>${ok ? 'Source: ' + esc(q.source) : 'Micro-lesson assigned: ' + esc(q.lesson)}</small></span></li>`; }).join('')}</ul>
+        <div class="qrow" style="margin-top:16px"><button class="btn primary" id="qAgain">Take it again</button><a class="btn" href="#dashboard">See the whole team</a></div>`;
+      return;
+    }
+    const q = Q[z.i], ans = z.answers[z.i];
+    const area = a ? a.areas[z.i].name : '';
+    let h = `<div class="meta"><span>Question ${z.i + 1} of ${Q.length}</span><span>${esc(area)}</span><span>Source: ${esc(q.source)}</span></div><p class="head">${esc(q.text)}</p>
+      <div class="opts" role="group" aria-label="Answer options">${q.options.map((o, i) => { let cls = ''; if (z.checked) { if (i === q.correct) cls = 'right'; else if (i === z.pick) cls = 'wrong'; } return `<button class="opt ${cls}" data-o="${i}" aria-pressed="${z.pick === i}" ${z.checked ? 'disabled' : ''}><span class="k">${'ABCD'[i]}</span><span>${esc(o)}</span></button>`; }).join('')}</div>`;
+    if (!z.checked) {
+      h += `<div class="qrow"><span class="note" style="font-size:13px;color:var(--ink-2)">How sure are you?</span><div class="seg" id="qSure" role="group" aria-label="Confidence"><button data-s="1" aria-pressed="${z.sure === true}">Sure</button><button data-s="0" aria-pressed="${z.sure === false}">Not sure</button></div><span class="sp"></span><button class="btn primary" id="qCheck" ${z.pick == null || z.sure == null ? 'disabled' : ''}>Check answer</button></div>`;
+    } else {
+      const ok = ans.choice === q.correct, st = ok ? 'go' : ans.sure ? 'fix' : 'watch';
+      const fv = fi >= 0 ? r0(a.heat[fi][z.i] * 100) : null, g = a.gaps[z.i];
+      h += `<div class="fb">${pill(st, false, ok ? 'Right' : ans.sure ? 'Confidently wrong' : 'Wrong, not sure')}
+        ${ok ? '' : `<p><b>Approved answer:</b> ${esc(q.options[q.correct])}</p>`}
+        <p><b>Micro-lesson:</b> ${esc(q.lesson)}</p>
+        ${fv == null ? '' : `<p class="muted" style="font-size:13.5px">At ${E.PULSES[S.pulse].label}, ${fv}% of ${esc(a.team[fi].short)} answered this correctly. Across the team the most chosen wrong answer was “${esc(q.options[g.wrongIdx])}”.</p>`}
+        <div class="qrow"><span class="sp"></span><button class="btn primary" id="qNext">${z.i + 1 < Q.length ? 'Next question' : 'See my result'}</button></div></div>`;
+    }
+    el.innerHTML = h;
+  }
+  $('#qside').addEventListener('change', e => { if (e.target.name === 'qrole') { resetQuiz(e.target.value); renderQuiz(); } });
+  $('#qcard').addEventListener('click', e => {
+    const z = S.quiz, Q = E.CASES[S.caseId].questions;
+    const o = e.target.closest('.opt'); if (o && !z.checked) { z.pick = +o.dataset.o; renderQuiz(); return; }
+    const s = e.target.closest('#qSure button'); if (s) { z.sure = s.dataset.s === '1'; renderQuiz(); return; }
+    if (e.target.closest('#qCheck')) { z.answers[z.i] = { choice: z.pick, sure: z.sure }; z.checked = true; renderQuiz(); return; }
+    if (e.target.closest('#qNext')) { z.i++; z.pick = null; z.sure = null; z.checked = false; renderQuiz(); $('#qcard').focus?.(); return; }
+    if (e.target.closest('#qAgain')) { resetQuiz(); renderQuiz(); }
+  });
+
+  // ---------- fix list desk ----------
+  function nextStep(a) {
+    const on = a.traj.on, off = a.traj.off, k = S.pulse;
+    if (k >= E.PULSES.length - 1) return { txt: 'This is the last pulse. Findings go into the launch memory for Sino\'s next launch.' };
+    const nx = E.PULSES[k + 1], proj = a.traj[S.g.remediation ? 'on' : 'off'][k + 1];
+    return { nx, proj, txt: `Next pulse ${nx.label} (${nx.when}): projected index ${r0(proj)} with the current settings${S.g.remediation ? '' : `, or ${r0(on[k + 1])} if micro-lessons are switched on`}.` };
+  }
+  function briefModel(a) {
+    const c = E.CASES[S.caseId], p = E.PULSES[S.pulse], ranked = [...a.areas].sort((x, y) => y.risk - x.risk);
+    const top = ranked.filter(x => x.status !== 'go').slice(0, 3);
+    const pairs = a.areas.reduce((s, x) => s + x.weak.length, 0);
+    return { c, p, ranked, top, pairs, next: nextStep(a) };
+  }
+  function renderDesk(a) {
+    const M = briefModel(a), { c, p } = M;
+    $('#deskNote').textContent = `${c.title} · ${p.label} · ${a.totalN} respondents`;
+    $('#ledger').innerHTML = `<h3>Fix list</h3><p class="note">Ranked by risk: missed answers + gap + twice the confidently wrong share.</p>` +
+      M.ranked.map(r => `<div class="lrow" data-area="${r.id}"><div class="top"><span>${esc(r.name)}</span>${pill(r.status, true)}</div><div class="val">${r0(r.acc)}% right · gap ${r0(r.gap)} · ${r0(r.cw)}% sure but wrong</div><div class="val">Owner: ${esc(r.owner)}</div>${r.weak.length ? `<div class="val">Below 70%: ${r.weak.slice(0, 4).map(w => esc(w.f.short)).join(', ')}${r.weak.length > 4 ? ` and ${r.weak.length - 4} more` : ''}</div>` : `<div class="val">Every function at 70% or more</div>`}</div>`).join('');
+    const n = (area, v) => `<span class="n" data-area="${area}">${v}</span>`;
+    const vword = a.verdict === 'go' ? 'Go' : a.verdict === 'watch' ? 'Watch' : 'Fix before launch';
+    const fixLines = M.top.length ? M.top.map(r => { const g = a.gaps[r.qi]; return `<b>${esc(r.name)}</b>: ${n(r.id, r0(r.acc) + '% right')}, gap ${n(r.id, r0(r.gap))}. The most chosen wrong answer was “${esc(r.q.options[g.wrongIdx])}” (${esc(g.holder.short)} ${r0(g.holderShare * 100)}%). Owner: ${esc(r.owner)}.`; }).join('<br>') : 'Every area is at Go. Keep the next pulse to confirm the knowledge holds after launch.';
+    $('#paper').innerHTML = `<div class="meta"><span>Readiness brief</span><span>${esc(c.short)}</span><span>${p.label}, ${p.when}</span></div>
+      <p class="head">${esc(c.short)} scores ${n('', r0(a.lri))} on the launch readiness index at ${p.label}: <b>${vword}</b>.</p>
+      <h5>Where we stand</h5><p class="sec">${r0(a.acc)}% of answers match the launch truth sheet. The functions disagree with an average gap of ${r0(a.agi)}, and ${r0(a.cw)}% of answers were wrong but marked Sure. ${a.totalN} of ${a.invited} invited staff took part.</p>
+      <h5>Fix first</h5><p class="sec">${fixLines}</p>
+      <h5>Micro-lessons</h5><p class="sec">${S.g.remediation ? (M.pairs ? `Assigned for ${M.pairs} function-area pairs below 70%, before the next pulse.` : 'No function is below 70% in any area, so no micro-lessons are due.') : `Switched off. With micro-lessons the index is projected to reach ${r0(a.traj.on[Math.min(3, E.PULSES.length - 1)])} by T+30, against ${r0(a.traj.off[3])} without.`}</p>
+      <h5>Next step</h5><p class="sec">${esc(M.next.txt)}</p>`;
+    const ok = (v, t) => v ? 'pass' : t;
+    const label = a.areas.find(x => x.id === 'label'), safety = a.areas.find(x => x.id === 'safety');
+    const checks = [
+      ['pass', 'Every question cites an approved source', `${a.Q.length} of ${a.Q.length} questions traced to a named document`],
+      ['pass', 'Medical-legal approval recorded', 'The bank was released only after approval (demo record)'],
+      [a.g.part >= 70 ? 'pass' : a.g.part >= 55 ? 'warn' : 'fail', 'Participation at 70% or more', `${a.g.part}% of invited staff took part`],
+      [ok(label.cw <= 6, label.cw <= 12 ? 'warn' : 'fail'), 'Few confident errors on label and claims', `${r0(label.cw)}% of label answers were wrong and marked Sure (target 6% or less)`],
+      [ok(safety.acc >= 85, safety.acc >= 70 ? 'warn' : 'fail'), 'Safety reporting known', `${r0(safety.acc)}% know the 24-hour rule (target 85%)`],
+      [ok(S.g.remediation, 'warn'), 'Gaps followed up', S.g.remediation ? `Micro-lessons logged for ${M.pairs} function-area pairs` : 'Micro-lessons are off; gaps are not followed up']
+    ];
+    const pct = a.g.part;
+    $('#guard').innerHTML = `<h3>Evidence and compliance</h3><p class="note" style="margin:0">Each pulse is logged per person as training and evaluation evidence under the 2026 Medical Representative Measures.</p>
+      <ul class="checks">${checks.map(([st, t, d]) => `<li class="${st}"><span class="ic" aria-hidden="true">${st === 'pass' ? '✓' : st === 'warn' ? '!' : '✕'}</span><span>${t}<small>${d}</small></span></li>`).join('')}</ul>
+      <div class="meter"><div class="lab"><span>Participation</span><span>${pct}%</span></div><div class="bar"><div class="fill" style="width:${pct}%"></div><div class="tick" style="left:70%"></div></div><p class="note" style="margin:4px 0 0">The mark is the 70% minimum for a Go verdict.</p></div>`;
+  }
+  function hot(area, on) { if (!area) return; document.querySelectorAll(`.lrow[data-area="${area}"], #paper .n[data-area="${area}"]`).forEach(x => x.classList.toggle('hot', on)); }
+  $('#paper').addEventListener('mouseover', e => { const t = e.target.closest('.n'); if (t) hot(t.dataset.area, true); });
+  $('#paper').addEventListener('mouseout', e => { const t = e.target.closest('.n'); if (t) hot(t.dataset.area, false); });
+
+  function briefMarkdown(a) {
+    const M = briefModel(a), { c, p } = M;
+    const vword = a.verdict === 'go' ? 'Go' : a.verdict === 'watch' ? 'Watch' : 'Fix before launch';
+    let md = `# Readiness brief: ${c.title}\n\n${p.label} (${p.when}) · ${a.totalN} of ${a.invited} staff took part\n\n**Launch readiness index ${r0(a.lri)}: ${vword}.**\n\n`;
+    md += `## Where we stand\n\n- Accuracy: ${r0(a.acc)}% of answers match the launch truth sheet\n- Alignment gap: ${r0(a.agi)} (0 = every function answers alike)\n- Confidently wrong: ${r0(a.cw)}% of answers\n\n`;
+    md += `## Fix list\n\n| Area | Status | Right | Gap | Sure but wrong | Owner | Functions below 70% |\n| --- | --- | --- | --- | --- | --- | --- |\n` + M.ranked.map(r => `| ${r.name} | ${STAT[r.status][2]} | ${r0(r.acc)}% | ${r0(r.gap)} | ${r0(r.cw)}% | ${r.owner} | ${r.weak.map(w => w.f.short).join(', ') || 'None'} |`).join('\n') + '\n\n';
+    md += `## Next step\n\n${M.next.txt}\n\n_Illustrative demonstration from T-Minus (project PAI-051). Not Sino, CTTQ or GSK data._\n`;
+    return md;
+  }
+  function ledgerCSV(a) {
+    const c = E.CASES[S.caseId], p = E.PULSES[S.pulse], rows = E.roster(a);
+    const head = 'respondent_id,function,region,launch,pulse,questions,correct,confidently_wrong,micro_lessons_assigned,areas_missed,question_bank,approval_record';
+    return head + '\n' + rows.map(r => [r.id, `"${r.f.name}"`, r.region, `"${c.title}"`, p.label, a.Q.length, r.right, r.cw, S.g.remediation ? r.missed.length : 0, `"${r.missed.map(m => m === 'sixth' ? c.sixth.name : E.AREAS.find(x => x.id === m).name).join('; ')}"`, `${c.id}-bank-v1 (demo)`, 'MLR approval recorded (demo)'].join(',')).join('\n') + '\n';
+  }
+  $('#copyBtn').addEventListener('click', async e => {
+    const b = e.currentTarget, md = briefMarkdown(S.last);
+    try { await navigator.clipboard.writeText(md); b.textContent = 'Copied'; }
+    catch { const r = document.createRange(); r.selectNodeContents($('#paper')); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); b.textContent = 'Selected: press copy'; }
+    setTimeout(() => { b.textContent = 'Copy brief'; }, 2200);
+  });
+  async function save(btn, filename, data, label) {
+    if (!S.downloads) return;
+    try { await S.downloads.save({ filename, data }); btn.textContent = 'Saved'; }
+    catch (err) { btn.textContent = err && err.code === 'declined' ? 'Not saved' : 'Could not save'; if (err && ['unavailable', 'not_granted', 'capability_disabled', 'capability_removed'].includes(err.code)) btn.hidden = true; }
+    setTimeout(() => { btn.textContent = label; }, 2400);
+  }
+  $('#dlMd').addEventListener('click', e => save(e.currentTarget, `t-minus-brief-${S.caseId}-${E.PULSES[S.pulse].label}.md`, briefMarkdown(S.last), 'Download brief (.md)'));
+  $('#dlCsv').addEventListener('click', e => save(e.currentTarget, `t-minus-evidence-${S.caseId}-${E.PULSES[S.pulse].label}.csv`, ledgerCSV(S.last), 'Download evidence ledger (.csv)'));
+
+  // ---------- question bank (Claude) ----------
+  const SAMPLE_SRC = `LAUNCH TRUTH SHEET: Bepirovirsen, mainland China (illustrative demo, not GSK or Sino data)
+
+1. Positioning. A finite-duration treatment aimed at functional cure for suitable adults with chronic hepatitis B who are already on nucleos(t)ide analogue therapy.
+
+2. Year-1 priority patients. Adults on stable nucleos(t)ide analogue therapy with low hepatitis B surface-antigen levels, treated at hepatology centres of excellence.
+
+3. Claims. Describe efficacy only with the endpoints and rates stated in the approved label. Never describe the product as a cure for all patients. Refer detailed clinical questions to a medical science liaison.
+
+4. Hospital listing. The key account manager submits the listing dossier to the hospital pharmacy and therapeutics committee, with medical affairs support. Field staff must not offer free stock, gifts or any benefit to secure listing.
+
+5. Supply before listing. Patients may fill prescriptions at the designated DTP pharmacies named in the distribution plan. Field staff never handle or deliver product.
+
+6. Safety. Any adverse event heard by any employee must reach pharmacovigilance within 24 hours, whether or not it seems serious. GSK holds pharmacovigilance duties; CTTQ forwards reports through the agreed alliance hand-off.
+
+7. Off-label enquiries. Do not discuss off-label use. Log the enquiry and refer it to medical information, which answers in writing.`;
+  function renderBankIntro() {
+    const ta = $('#srcText'); if (!ta.value) ta.value = SAMPLE_SRC;
+    $('#srcCount').value = `${ta.value.length.toLocaleString()} characters`;
+    const c = E.CASES[S.caseId], team = E.teamFor(c, { ...S.g, alliance: true }), cur = $('#genRole').value || 'rep';
+    $('#genRole').innerHTML = team.map(f => `<option value="${f.id}" ${f.id === cur ? 'selected' : ''}>${esc(f.name)}</option>`).join('');
+    if (!S.gen.items) renderBankOut();
+  }
+  function renderBankOut(msg) {
+    const out = $('#bankOut');
+    if (msg) { out.innerHTML = `<div class="panel empty">${msg}</div>`; return; }
+    if (!S.gen.items) {
+      out.innerHTML = S.sample
+        ? `<div class="panel empty"><b>No questions drafted yet</b>Choose a role and select “Draft questions with Claude”. Each question must quote your text word for word, or the page blocks it.</div>`
+        : `<div class="panel empty"><b>Drafting needs Claude in the viewer</b>Open this page in Claude to draft questions from your own text. The citation lock still applies there: a question whose quote is not in your text is blocked.</div>`;
+      return;
+    }
+    const src = $('#srcText').value, items = S.gen.items;
+    const okN = items.filter(x => x.ok).length;
+    out.innerHTML = `<div class="status">${okN} of ${items.length} questions passed the citation lock${okN < items.length ? '; blocked questions cannot be added to the bank' : ''}.</div>` + items.map((it, k) => `<div class="panel gq ${it.ok ? '' : 'blocked'}"><div class="qrow">${pill(it.ok ? 'go' : 'fix', true, it.ok ? 'Source found in your text' : 'Blocked: quote not in your text')}<span class="sp"></span><span class="note">Question ${k + 1}</span></div><h4>${esc(it.question)}</h4><ol type="A">${it.options.map((o, i) => `<li class="${i === it.answer_index ? 'ans' : ''}">${esc(o)}${i === it.answer_index ? ' (approved)' : ''}</li>`).join('')}</ol><blockquote>${esc(it.source_quote || 'No quote given')}</blockquote></div>`).join('');
+    void src;
+  }
+  $('#srcText').addEventListener('input', e => { $('#srcCount').value = `${e.target.value.length.toLocaleString()} characters`; });
+  $('#genStop').addEventListener('click', () => S.gen.ctl?.abort());
+  $('#genBtn').addEventListener('click', async () => {
+    if (!S.sample) return;
+    const src = $('#srcText').value.trim().slice(0, 12000), n = +$('#genN').value;
+    const role = $('#genRole').selectedOptions[0]?.textContent || 'Medical representatives';
+    if (src.length < 80) { $('#genStatus').textContent = 'Paste at least a paragraph of approved text first.'; return; }
+    const prompt = `You write launch-readiness quiz questions for a pharmaceutical launch team.
+Use ONLY facts stated in the SOURCE TEXT. Do not add any clinical, pricing or policy fact that is not in it.
+Write ${n} multiple-choice questions for this role: ${role}. Each question tests one fact this role must know on launch day.
+Give 4 options: 1 correct and 3 plausible but wrong. Vary the position of the correct option.
+For each question give source_quote: one sentence or phrase copied word for word from the SOURCE TEXT that proves the correct answer (8 to 40 words, no changes, no ellipses).
+Reply with only a JSON array, for example:
+[{"question": "...", "options": ["...", "...", "...", "..."], "answer_index": 2, "source_quote": "..."}]
+
+SOURCE TEXT:
+"""
+${src}
+"""`;
+    const btn = $('#genBtn'), stop = $('#genStop'), st = $('#genStatus');
+    S.gen.ctl = new AbortController(); btn.disabled = true; stop.hidden = false; st.textContent = 'Thinking…';
+    renderBankOut('<b>Drafting questions</b>Claude is reading your text. This usually takes 10 to 40 seconds.');
+    try {
+      const res = await S.sample.json(prompt, { signal: S.gen.ctl.signal, onText: () => { st.textContent = 'Writing questions…'; } });
+      const arr = (Array.isArray(res) ? res : Array.isArray(res?.questions) ? res.questions : []).filter(x => x && typeof x.question === 'string' && Array.isArray(x.options) && x.options.length === 4);
+      if (!arr.length) throw { code: 'invalid_json' };
+      S.gen.items = arr.slice(0, n).map(x => { const ai = Math.max(0, Math.min(3, Math.round(Number(x.answer_index) || 0))); return { question: String(x.question), options: x.options.map(String), answer_index: ai, source_quote: String(x.source_quote || ''), ok: E.citationOk(x.source_quote, src) }; });
+      st.textContent = ''; renderBankOut();
+    } catch (err) {
+      const code = err && err.code;
+      if (['not_granted', 'sampling_disabled', 'not_declared', 'capability_disabled', 'capability_removed'].includes(code)) { S.sample = null; btn.hidden = true; st.textContent = ''; S.gen.items = null; renderBankOut(); }
+      else { st.textContent = code === 'cancelled' ? 'Stopped.' : code === 'rate_limited' ? 'Too many requests just now. Try again in a minute.' : code === 'invalid_json' ? 'The reply was not in the expected format. Try again.' : code === 'refused' ? 'Claude declined this text. Try different source text.' : 'Something went wrong. Try again.'; renderBankOut(S.gen.items ? undefined : undefined); }
+    } finally { btn.disabled = false; stop.hidden = true; S.gen.ctl = null; }
+  });
+
+  // ---------- update ----------
+  function update() {
+    const a = E.analyze(S.caseId, S.g, S.pulse); S.last = a;
+    renderSummary(a); renderHero(a); renderCharts(a); renderDesk(a); renderQuiz(); renderBankIntro();
+  }
+
+  renderCases(); S.last = E.analyze(S.caseId, S.g, S.pulse); renderControls(); update();
+  if (window.claude && window.claude.use) {
+    window.claude.use('sample').then(s => { if (s) { S.sample = s; $('#genBtn').hidden = false; if (!S.gen.items) renderBankOut(); } }).catch(() => {});
+    window.claude.use('downloads').then(d => { if (d) { S.downloads = d; $('#dlMd').hidden = false; $('#dlCsv').hidden = false; } }).catch(() => {});
+  }
+})();
+
+</script>
